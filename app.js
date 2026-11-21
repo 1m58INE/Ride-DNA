@@ -77,183 +77,203 @@ const MBTI_QUESTIONS=[
   {a:'TF',t:'쉽지 않은 선택이라도 일관된 기준을 지키려 한다.',r:false},
   {a:'JP',t:'일을 마무리할 때 정해진 순서가 있는 편이 좋다.',r:false}
 ];
-const SAVE_KEY='ride-dna-quiz-v1.2';
-const LEGACY_SAVE_KEY='ride-dna-quiz-v1';
-let state={completed:false,screen:'home',answers:Array(QUESTIONS.length).fill(null),qIndex:0,adaptive:[],adaptIndex:0,adaptAnswers:[],personality:Array(MBTI_QUESTIONS.length).fill(null),personalityIndex:0,mbti:null,mbtiSource:null,shared:false};
-const $=id=>document.getElementById(id);const screens={home:$('home-screen'),quiz:$('quiz-screen'),result:$('result-screen'),mbti:$('mbti-screen'),manual:$('manual-screen')};
-function save(){
- if(state.shared)return; // Opening a friend's shared result must not erase one's own in-progress test.
- try{localStorage.setItem(SAVE_KEY,JSON.stringify(state));}catch{}
+/* v1.3.0 — Shared 16-item core; deep adds 24 items. MBTI-like questions are separate. */
+const CORE=QUESTIONS.slice(0,16);
+const DEEP=[
+ {c:'주행 경험',t:'오랜 시간 바이크를 탄 날, 가장 만족스러운 것은?',h:'경험이 없다면 장시간 이동을 상상해 주세요.',a:[option('피로가 적어 다음 날에도 부담이 없는 것',{comfort:3,touring:2}),option('다양한 장소를 둘러볼 수 있었던 것',{versatility:3,touring:2}),option('차체를 다루는 재미가 오래 남은 것',{agility:3,sportiness:2}),option('비용과 시간을 효율적으로 쓴 것',{practicality:3,city:2})]},
+ {c:'바이크의 성격',t:'기계적인 특성 중 가장 마음이 가는 것은?',h:'성능 수치가 아닌 느낌을 기준으로 고르세요.',a:[option('가벼운 핸들링과 즉각적인 조작',{agility:3,sportiness:1}),option('안정적이고 편안한 움직임',{comfort:3,touring:1}),option('어느 길에서도 대응하는 범용성',{versatility:3}),option('단순하고 편리한 관리',{practicality:3,city:1})]},
+ {c:'선택의 타협',t:'바이크 한 대로 모든 것을 해야 한다면?',h:'단 하나만 보장받는다고 생각해 보세요.',a:[option('출퇴근에서 가장 편한 구성',{city:3,practicality:2}),option('멀리 갈 때 가장 편한 구성',{touring:3,comfort:2}),option('주말에 가장 몰입되는 조작감',{agility:2,sportiness:3}),option('도로 환경이 달라도 쓸 수 있는 구성',{versatility:3,practicality:1})]},
+ {c:'소유 후 일상',t:'바이크를 세워두는 시간이 길어진다면 무엇이 아쉬울까요?',h:'실제로 가장 하고 싶었던 것을 떠올려 주세요.',a:[option('짧은 이동에도 자주 타지 못하는 것',{city:3,practicality:2}),option('장거리 계획을 떠나지 못하는 것',{touring:3}),option('차체의 움직임을 즐기지 못하는 것',{agility:3,sportiness:2}),option('취향이 드러나는 물건을 가까이 두지 못하는 것',{expression:3})]},
+ {c:'탑승 환경',t:'예상보다 바람이 강한 날, 더 신경 쓰이는 것은?',h:'안전이 확보된 정상적인 주행 조건을 가정합니다.',a:[option('노출과 피로가 커지는 것',{comfort:3,touring:2}),option('작은 차체 움직임에 예민해지는 것',{agility:2,sportiness:2}),option('다른 이동수단으로 바꿔야 할 수도 있는 것',{practicality:3,city:2}),option('계획한 경로를 바꿔야 하는 것',{touring:2,versatility:2})]},
+ {c:'주말 일정',t:'당일 라이딩 코스가 마음에 들지 않는다면?',h:'교통법규를 준수할 수 있는 선택지만 생각해 주세요.',a:[option('길고 편안한 경로를 다시 찾는다',{touring:3,comfort:2}),option('조작이 재미있는 포장길을 찾는다',{agility:3,sportiness:2}),option('색다른 경로와 풍경을 찾는다',{versatility:3}),option('시간을 아끼고 가까운 곳을 찾는다',{city:3,practicality:2})]},
+ {c:'감성의 기준',t:'오래도록 갖고 싶은 바이크의 조건은?',h:'유행이 바뀌어도 남을 가치를 생각해 보세요.',a:[option('유지하기 쉽고 쓰임이 많은 것',{practicality:3,city:1}),option('보면 볼수록 좋은 외형',{expression:3}),option('오래 타도 편안한 구성',{comfort:3,touring:1}),option('움직일 때 살아나는 조작감',{agility:2,sportiness:3})]},
+ {c:'휴식의 방식',t:'라이딩 중 쉬는 시간이 생기면 가장 하고 싶은 일은?',h:'정답은 없어요. 평소 마음에 드는 휴식에 가까운 것.',a:[option('조용히 풍경을 바라본다',{touring:2,comfort:2},1),option('다음에 가볼 길을 살펴본다',{versatility:3,touring:1}),option('차체와 장비를 살펴본다',{sportiness:2,agility:2}),option('근처에서 볼일을 마친다',{city:2,practicality:3})]},
+ {c:'실제 쓰임',t:'주중에도 바이크를 자주 탈 예정이라면?',h:'어떤 조건이 가장 오래 도움이 될까요?',a:[option('주차와 이동이 편한 구성',{city:3,practicality:3}),option('피로를 줄이는 안정적인 자세',{comfort:3}),option('계속 타고 싶어지는 조작감',{agility:3,sportiness:1}),option('내가 좋아하는 외형을 매일 볼 수 있는 것',{expression:3})]},
+ {c:'동승과 짐',t:'예상보다 짐이 많아질 때 무엇을 선택하나요?',h:'구매 전 고민이라고 가정하세요.',a:[option('적재가 쉬운 구조를 우선한다',{touring:2,practicality:3}),option('짐이 적어야 더 즐겁다',{agility:3,sportiness:2}),option('어떤 환경에서도 활용도를 확보한다',{versatility:3}),option('짐보다는 외관과 개성을 유지한다',{expression:3})]},
+ {c:'실용적인 타협',t:'다음 중 가장 받아들이기 어려운 것은?',h:'마음에 드는 바이크라도 완벽하지는 않아요.',a:[option('매일 이동하기 번거롭다',{city:3,practicality:2}),option('장거리에서 피로가 심하다',{comfort:3,touring:2}),option('차체 반응이 둔하게 느껴진다',{agility:3,sportiness:1}),option('외형에 오래 애착이 가지 않는다',{expression:3})]},
+ {c:'길의 조건',t:'탐험하고 싶은 길의 모습은?',h:'실제로 주행이 허용되는 길만 가정해 주세요.',a:[option('새로운 도시의 골목과 도로',{city:3,versatility:1}),option('여러 지역을 잇는 긴 포장도로',{touring:3,comfort:1}),option('굴곡과 코너가 이어지는 포장도로',{agility:3,sportiness:2}),option('포장 상태가 변화하는 합법적인 탐방로',{versatility:3})]},
+ {c:'가치 비교',t:'같은 예산에서 한 가지를 더 얻을 수 있다면?',h:'모든 조건이 충분히 안전하다는 전제입니다.',a:[option('유지 부담을 줄이는 기능',{practicality:3,city:2}),option('편안함을 높이는 장비',{comfort:3,touring:2}),option('차체 조작감을 개선하는 요소',{agility:3,sportiness:2}),option('취향에 더 맞는 디자인',{expression:3})]},
+ {c:'여행의 방식',t:'처음으로 2박 3일 라이딩을 떠난다면?',h:'현재 경험이 없어도 떠올려 보세요.',a:[option('최소한의 짐으로 가볍게 움직인다',{agility:2,practicality:2}),option('충분히 준비해 편하게 달린다',{touring:3,comfort:3}),option('목적지보다 다양한 길을 선택한다',{versatility:3,touring:1}),option('사진과 풍경이 잘 어울리는 코스를 찾는다',{expression:2,touring:2})]},
+ {c:'조작감의 의미',t:'코너가 이어지는 구간에서 선호하는 느낌은?',h:'안전한 속도와 합법적인 도로 주행을 전제로 합니다.',a:[option('부드럽고 안정적인 반응',{comfort:3,agility:1}),option('가볍고 빠르게 반응하는 차체',{agility:3,sportiness:3}),option('노면이 달라도 무리 없는 대응',{versatility:3}),option('차분한 페이스로 풍경까지 즐기는 느낌',{touring:2,comfort:2})]},
+ {c:'장기 보유',t:'몇 년 뒤에도 만족하려면 가장 중요한 것은?',h:'처음의 설렘이 잦아든 다음을 생각하세요.',a:[option('지속 가능한 유지·관리',{practicality:3}),option('오래 보아도 좋아할 디자인',{expression:3}),option('꾸준히 즐길 수 있는 조작감',{agility:2,sportiness:3}),option('여행에서의 편안함',{touring:2,comfort:3})]},
+ {c:'상황 선택',t:'잠깐 시간이 생겼을 때 어디로 나갈까요?',h:'특별한 계획이 없다는 전제예요.',a:[option('집 근처의 익숙한 길',{city:3,practicality:2}),option('가까운 전망 좋은 장소',{touring:2,comfort:2}),option('주행감이 좋은 포장도로',{agility:2,sportiness:3}),option('가본 적 없는 다른 길',{versatility:3})]},
+ {c:'환경 변화',t:'도로 환경이 예상과 달라졌다면?',h:'위험을 피하고 안전하게 우회하는 상황입니다.',a:[option('편하고 검증된 경로를 선택한다',{comfort:2,practicality:3}),option('여행 전체의 흐름을 유지한다',{touring:3}),option('합법적인 새로운 경로를 찾아본다',{versatility:3}),option('운동성이 좋은 포장길을 다시 고른다',{agility:2,sportiness:3})]},
+ {c:'주행 목적',t:'가장 마음에 드는 일주일의 바이크 사용 패턴은?',h:'실제 일상과 상상 속 이상을 함께 고려하세요.',a:[option('평일에 자주 짧게 타기',{city:3,practicality:3}),option('주말마다 멀리 떠나기',{touring:3,comfort:2}),option('짧아도 집중해서 즐기기',{agility:3,sportiness:2}),option('그때그때 다른 경로 시도하기',{versatility:3,expression:1})]},
+ {c:'포기할 조건',t:'둘 중 꼭 하나를 양보해야 한다면?',h:'더 중요하게 지키고 싶은 것을 골라 주세요.',a:[option('편안함보다 조작감을 지킨다',{agility:3,sportiness:2}),option('조작감보다 편안함을 지킨다',{comfort:3,touring:2}),option('어느 쪽보다 관리 편의성을 지킨다',{practicality:3,city:2}),option('어느 쪽보다 디자인을 지킨다',{expression:3})]},
+ {c:'디자인과 성능',t:'외관과 주행 성격이 엇갈리면?',h:'내가 후회하지 않을 선택을 떠올려 보세요.',a:[option('주행 특성이 맞으면 외관은 타협한다',{sportiness:2,agility:2}),option('외관이 좋으면 일부 특성은 타협한다',{expression:3}),option('생활 속 편리함을 최우선으로 둔다',{practicality:3,city:2}),option('오래 타는 편안함을 우선한다',{comfort:3,touring:2})]},
+ {c:'기술과 감성',t:'새로운 모델을 볼 때 가장 먼저 찾아볼 정보는?',h:'관심이 가는 항목 하나만 고르세요.',a:[option('연비·정비·실용 기능',{practicality:3,city:2}),option('시트와 방풍 등 편의 요소',{comfort:3,touring:2}),option('차체 무게·핸들링 특성',{agility:3,sportiness:2}),option('디자인·소재·시각적 특징',{expression:3})]},
+ {c:'한 번의 선택',t:'좋아하는 모델이 모두 같은 가격이라면?',h:'오직 소유 경험을 기준으로 판단해 주세요.',a:[option('생활에 가장 자주 쓰일 바이크',{city:3,practicality:3}),option('먼 곳까지 편하게 갈 바이크',{touring:3,comfort:2}),option('짧게 타도 몰입되는 바이크',{sportiness:3,agility:3}),option('다양한 길에 도전할 수 있는 바이크',{versatility:3,expression:1})]},
+ {c:'최종 우선순위',t:'바이크를 통해 가장 오래 얻고 싶은 가치는?',h:'이제 마지막 질문이에요.',a:[option('언제든 편하게 이동할 자유',{city:2,practicality:3}),option('먼 길과 여행의 경험',{touring:3,comfort:2}),option('차체를 다루는 즐거움',{agility:3,sportiness:3}),option('낯선 길과 나다운 경험',{versatility:3,expression:2})]}
+];
+const DEEP_MBTI_EXTRA=[
+ {a:'EI',t:'새로운 사람을 만나면 대화 속에서 생각이 더 잘 정리된다.',r:false},
+ {a:'SN',t:'일을 이해할 때 구체적인 사례가 있어야 마음이 놓인다.',r:true},
+ {a:'TF',t:'판단할 때 사람들의 관계를 보호하는 것이 중요하다.',r:true},
+ {a:'JP',t:'마감이 정해져 있으면 미리 준비하는 편이다.',r:false},
+ {a:'EI',t:'혼자 생각을 정리한 뒤 의견을 말하는 편이다.',r:true},
+ {a:'SN',t:'새로운 아이디어의 가능성을 떠올리는 편이 즐겁다.',r:false},
+ {a:'TF',t:'결정의 일관성과 논리적 기준을 중요하게 여긴다.',r:false},
+ {a:'JP',t:'결정할 수 있어도 여러 가능성을 열어두고 싶다.',r:true},
+ {a:'EI',t:'긴 시간 사람들과 어울린 뒤에는 혼자 쉬고 싶다.',r:true},
+ {a:'SN',t:'새로운 지식을 배울 때 실제 활용 사례부터 확인한다.',r:true},
+ {a:'TF',t:'말이 맞더라도 상대의 감정을 고려해 표현을 바꾼다.',r:true},
+ {a:'JP',t:'미리 정해둔 계획을 완료하면 마음이 편해진다.',r:false}
+];
+// Same first 8 items for both modes, so an upgrade only asks unanswered items.
+const PERSONALITY_ITEMS=[...MBTI_QUESTIONS.slice(0,8),...MBTI_QUESTIONS.slice(8),...DEEP_MBTI_EXTRA.slice(0,8)];
+const MODE_CONFIG={quick:{label:'빠른 유형 찾기',length:16,mbti:8},deep:{label:'진지한 유형 찾기',length:40,mbti:20}};
+const STORE='ridedna-v1.3.0';
+function blankState(){return {screen:'home',mode:null,answers:Array(40).fill(null),index:0,adaptive:[],adaptAnswers:[],adaptIndex:0,completed:false,personality:Array(20).fill(null),personalityIndex:0,estimated:null,estimateLength:0,mbtiManual:null,manualDraft:[null,null,null,null],shared:false,sharedData:null,experience:'unspecified'};}
+let state=blankState();
+const $=id=>document.getElementById(id);
+const screens=Object.fromEntries(['home','choose','quiz','result','mbti','manual'].map(x=>[x,$(x+'-screen')]));
+let locked=false, timer=null, toastTimer=null;
+function qs(){return state.mode==='deep'?[...CORE,...DEEP]:CORE;}
+function answerTotal(){return MODE_CONFIG[state.mode]?.length||16;}
+function mbtiTotal(){return MODE_CONFIG[state.mode]?.mbti||8;}
+function isUnfinished(){return Boolean(state.mode&&!state.completed&&state.answers.slice(0,answerTotal()).some(v=>v!==null));}
+function persist(){if(state.shared)return;try{localStorage.setItem(STORE,JSON.stringify({...state,screen:['manual','mbti'].includes(state.screen)?'result':state.screen,shared:false,sharedData:null}));}catch{}}
+function restore(){try{const d=JSON.parse(localStorage.getItem(STORE)||'null');if(!d||!['quick','deep',null].includes(d.mode)||!Array.isArray(d.answers)||d.answers.length!==40||!d.answers.every(v=>v===null||(Number.isInteger(v)&&v>=0&&v<4)))return;
+ const x=blankState();Object.assign(x,d);x.answers=d.answers; x.shared=false;x.sharedData=null;
+ if(!Array.isArray(x.personality)||x.personality.length!==20||!x.personality.every(v=>v===null||(Number.isInteger(v)&&v>=-2&&v<=2)))x.personality=Array(20).fill(null);
+ if(!Array.isArray(x.adaptive))x.adaptive=[];if(!Array.isArray(x.adaptAnswers))x.adaptAnswers=[];
+ x.index=Math.min(Math.max(Number.isInteger(x.index)?x.index:0,0),x.mode==='deep'?40:15);
+ x.personalityIndex=Math.max(0,Math.min(19,Number.isInteger(x.personalityIndex)?x.personalityIndex:0));
+ if(!screens[x.screen]||x.screen==='manual'||x.screen==='mbti')x.screen='home';
+ if(x.screen==='result'&&!x.completed)x.screen='home';if(x.screen==='quiz'&&x.completed)x.screen='result';state=x;
+ }catch{}}
+function answerTotalFor(mode){return MODE_CONFIG[mode]?.length||16;}
+function toast(message){const el=$('toast');el.textContent=message;el.hidden=false;clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.hidden=true,3200);}
+function urlState(){return {rideDna:true,screen:state.screen,mode:state.mode,index:state.index,adaptIndex:state.adaptIndex,personalityIndex:state.personalityIndex};}
+function show(name,{nav='push',focus=true}={}){
+ if(!screens[name])name='home';clearTimeout(timer);locked=false;state.screen=name;
+ document.body.dataset.view=name;for(const [key,s] of Object.entries(screens))s.hidden=key!==name;
+ $('hero-reset').hidden=!isUnfinished();$('hero-cta-label').textContent='내 라이더 유형 찾기';
+ if(name==='choose')renderChoose();if(name==='quiz')renderQuiz();if(name==='result')renderResult();if(name==='mbti')renderMbti();if(name==='manual')renderManual();
+ window.scrollTo({top:0,behavior:'instant'});persist();
+ if(nav!=='silent'){const route=urlState();if(nav==='replace')history.replaceState(route,'');else if(!history.state?.rideDna||Object.entries(route).some(([k,v])=>history.state?.[k]!==v))history.pushState(route,'');}
+ if(focus){let target=screens[name].querySelector('[data-autofocus]');if(target)requestAnimationFrame(()=>target.focus({preventScroll:true}));}
 }
-function restore(){
- try{
-  const text=localStorage.getItem(SAVE_KEY)||sessionStorage.getItem(LEGACY_SAVE_KEY);
-  const data=JSON.parse(text||'null');
-  if(!data||!Array.isArray(data.answers)||data.answers.length!==QUESTIONS.length)return;
-  if(!data.answers.every(x=>x===null||(Number.isInteger(x)&&x>=0&&x<4)))return;
-  Object.assign(state,data);
-  if(!Array.isArray(state.adaptive))state.adaptive=[];
-  if(!Array.isArray(state.adaptAnswers))state.adaptAnswers=[];
-  if(!Array.isArray(state.personality)||state.personality.length!==12)state.personality=Array(12).fill(null);
-  if(!Number.isInteger(state.qIndex)||state.qIndex<0||state.qIndex>20)state.qIndex=0;
-  if(!Number.isInteger(state.adaptIndex)||state.adaptIndex<0||state.adaptIndex>=Math.max(1,state.adaptive.length))state.adaptIndex=0;
-  if(!Number.isInteger(state.personalityIndex)||state.personalityIndex<0||state.personalityIndex>11)state.personalityIndex=0;
-  if(!screens[state.screen]||state.screen==='manual')state.screen='home';
-  if(state.screen==='result'&&!state.completed)state.screen='home';
-  state.shared=false;
-  if(!localStorage.getItem(SAVE_KEY))save();
- }catch{}
+function renderChoose(){
+ const resume=$('continue-box');resume.hidden=!isUnfinished();if(!resume.hidden)$('resume-description').textContent=`${MODE_CONFIG[state.mode].label} · ${state.index+1}번 질문부터 이어하기`;
 }
-function hasUnfinishedQuiz(){return !state.completed&&!state.shared&&(state.answers.some(x=>x!==null)||state.qIndex>0);}
-function updateHomeCta(){const active=hasUnfinishedQuiz();$('hero-cta-label').textContent=active?'이어서 테스트하기':'내 라이더 유형 찾기';$('hero-reset').hidden=!active;}
-function route(){return {rideDna:true,screen:state.screen,qIndex:state.qIndex,adaptIndex:state.adaptIndex,personalityIndex:state.personalityIndex};}
-function show(screen,{focus=true,nav='push'}={}){
- if(!screens[screen])screen='home';
- if(screen!=='quiz'){clearTimeout(answerTimer);answerLocked=false;}
- state.screen=screen;
- document.body.setAttribute('data-view',screen);
- updateHomeCta();
- for(const [name,el] of Object.entries(screens))el.hidden=name!==screen;
- window.scrollTo(0,0);
- if(screen==='quiz')renderQuestion();
- if(screen==='result')renderResult();
- if(screen==='mbti')renderMbti();
- if(screen==='manual')renderManual();
- save();
- if(nav!=='silent'){
-  const now=route(),prior=history.state;
-  const changed=!prior?.rideDna||Object.keys(now).some(k=>now[k]!==prior[k]);
-  if(nav==='replace')history.replaceState(now,'');
-  else if(changed)history.pushState(now,'');
+function newTest(mode){state=blankState();state.mode=mode;history.replaceState({rideDna:true,screen:'choose',mode:null,index:0},'',location.pathname);show('quiz');}
+function chooseMode(mode){if(isUnfinished()&&state.mode===mode){show('quiz');return;}if(state.completed&&state.mode===mode){newTest(mode);return;}newTest(mode);}
+function upgrade(){if(state.shared)return;const old=state.answers.slice(0,16);const manual=state.mbtiManual;const personality=state.personality.slice();const estimate=state.estimated;const estimateLength=state.estimateLength;
+ state=blankState();state.mode='deep';state.index=16;state.answers.splice(0,16,...old);state.personality=personality;state.estimated=estimate;state.estimateLength=estimateLength;state.mbtiManual=manual;show('quiz');}
+function quit(){if($('exit-dialog').showModal)$('exit-dialog').showModal();else if(confirm('나가도 답변은 이 기기에 보관됩니다. 나갈까요?'))show('home');}
+function renderQuiz(){
+ const deep=state.mode==='deep',extra=deep&&state.index>=40,q=extra?state.adaptive[state.adaptIndex]:qs()[state.index];
+ if(!q){finish();return;}
+ const total=answerTotal(),step=extra?40+state.adaptIndex+1:state.index+1,max=extra?40+state.adaptive.length:total;
+ const chapter=deep&&!extra?` · ${Math.floor(state.index/10)+1}/4 구간`:'';
+ $('quiz-stage').textContent=(extra?'추가 취향 확인':MODE_CONFIG[state.mode].label)+chapter;
+ $('quiz-progress-label').textContent=String(step).padStart(2,'0')+' / '+max;
+ const pct=Math.round((step-1)/Math.max(1,max)*100);$('quiz-progress-fill').style.width=pct+'%';$('quiz-progress').setAttribute('aria-valuenow',String(pct));
+ $('question-category').textContent=extra?'두 취향이 비슷하게 나타나요':q.c;
+ $('question-title').textContent=extra?'둘 중 어느 쪽이 조금 더 중요한가요?':q.t;
+ $('question-hint').textContent=extra?'어느 쪽도 아니라면 비슷하다고 선택해 주세요.':q.h;
+ const labels=extra?[q.options[0],q.options[1],'둘 다 비슷하다']:q.a.map(x=>x.label),selected=extra?state.adaptAnswers[state.adaptIndex]:state.answers[state.index];
+ const wrap=$('answers');wrap.replaceChildren();labels.forEach((label,i)=>{const b=document.createElement('button');b.type='button';b.className='answer';b.textContent=label;b.classList.toggle('chosen',i===selected);b.setAttribute('aria-pressed',String(i===selected));b.addEventListener('click',()=>choose(i));wrap.append(b);});
+ $('quiz-prev').disabled=!extra&&state.index===0;
+ $('quiz-helper').textContent=extra?'결과가 가까운 스타일을 조금 더 구분합니다.':'선택하면 다음 질문으로 이동합니다.';
+}
+function choose(i){if(locked||state.screen!=='quiz')return;const count=state.index>=40?3:qs()[state.index]?.a.length;if(!(i>=0&&i<count))return;locked=true;
+ [...$('answers').children].forEach((b,n)=>{b.classList.toggle('chosen',n===i);b.setAttribute('aria-pressed',String(n===i));});timer=setTimeout(()=>commit(i),260);
+}
+function commit(i){const total=answerTotal();if(state.index<total){state.answers[state.index]=i;if(state.index<total-1){state.index++;show('quiz',{focus:false});return;}if(state.mode==='deep'){initAdaptive();return;}finish();return;}
+ state.adaptAnswers[state.adaptIndex]=i;if(state.adaptIndex<state.adaptive.length-1){state.adaptIndex++;show('quiz',{focus:false});return;}
+ if(state.adaptive.length===4){const calc=calculate();if(calc.genres[0].score-calc.genres[1].score<=4){const a=buildAdaptive(calc,4);if(a.length){state.adaptive.push(...a);state.adaptIndex++;show('quiz',{focus:false});return;}}}finish();}
+function prev(){clearTimeout(timer);locked=false;if(state.index>=40){if(state.adaptIndex>0)state.adaptIndex--;else state.index=39;}else if(state.index>0)state.index--;show('quiz');}
+function initAdaptive(){const data=calculate();state.adaptive=[];state.adaptAnswers=[];state.adaptIndex=0;if(data.genres[0].score-data.genres[1].score<=7){state.adaptive=buildAdaptive(data,4);if(state.adaptive.length){state.index=40;show('quiz',{focus:false});return;}}finish();}
+function buildAdaptive(calc,count){const a=calc.genres[0].genre,b=calc.genres[1].genre;const used=new Set(state.adaptive.map(x=>x.axis));return K.map(axis=>({axis,gap:Math.abs(a.profile[axis]-b.profile[axis])})).filter(x=>x.gap>=15&&!used.has(x.axis)).sort((x,y)=>y.gap-x.gap).slice(0,count).map(x=>({axis:x.axis,options:ADAPTIVE_AXES[x.axis]}));}
+function axesFrom(){const selected=Object.fromEntries(K.map(k=>[k,0]));const capacity=Object.fromEntries(K.map(k=>[k,0]));let solo=0;
+ qs().forEach((q,i)=>{const answer=state.answers[i];if(answer===null||answer===undefined||!q.a[answer])return;
+ K.forEach(k=>{capacity[k]+=Math.max(0,...q.a.map(o=>o.w[k]||0));selected[k]+=q.a[answer].w[k]||0;});solo+=q.a[answer].solo||0;});
+ const axes=Object.fromEntries(K.map(k=>[k,Math.max(5,Math.min(100,Math.round(23+140*(selected[k]/Math.max(1,capacity[k])))))]));
+ state.adaptive.forEach((q,i)=>{if(state.adaptAnswers[i]===0)axes[q.axis]=Math.min(100,axes[q.axis]+9);if(state.adaptAnswers[i]===1)axes[q.axis]=Math.max(0,axes[q.axis]-9);});
+ return {axes,solo};
+}
+function calculate(){const {axes,solo}=axesFrom();const weights={city:1.1,touring:1.1,agility:1.15,comfort:1.1,versatility:1.2,expression:.94,practicality:1.04,sportiness:1.05};
+ const genres=GENRES.map(genre=>{let d=0,n=0;K.forEach(k=>{d+=weights[k]*(axes[k]-genre.profile[k])**2;n+=weights[k];});return {genre,score:Math.max(0,Math.round(100-Math.sqrt(d/n)))};}).sort((a,b)=>b.score-a.score||a.genre.id.localeCompare(b.genre.id));
+ const mood={explore:(axes.touring+axes.versatility-axes.city-axes.practicality)/2,active:(axes.agility+axes.sportiness)/2-axes.comfort,express:axes.expression-axes.practicality,solo};
+ const flags=[mood.explore>7,mood.active>7,mood.express>7,solo>=2];const type=flags.reduce((n,flag,i)=>n+(flag?8>>i:0),0);
+ return {axes,genres,type,neutral:Object.entries(mood).filter(([k,v])=>Math.abs(v)<(k==='solo'?2:8)).map(([k])=>k)};
+}
+function finish(){state.index=answerTotal();state.completed=true;show('result');}
+function htmlText(el,txt){el.textContent=txt;}
+function renderResult(){const share=state.shared&&state.sharedData;const result=share?share:calculate();const t=TYPES[result.type]||TYPES[0],picks=share?result.genres.map(x=>({genre:GENRES.find(g=>g.id===x.id),score:null})):result.genres;
+ $('result-title').textContent=t[0];$('result-english').textContent=t[1];$('result-serial').textContent='TYPE '+String(result.type+1).padStart(2,'0')+' / 16';
+ $('result-description').textContent=t[2];$('result-best-genre').textContent=picks[0]?.genre?.name||'—';$('result-next-genre').textContent=picks[1]?.genre?.name||'—';
+ $('result-mode').textContent=share?(share.mode==='deep'?'심화 결과 공유':'빠른 결과 공유'):state.mode==='deep'?'진지한 유형 찾기 결과':'빠른 유형 찾기 결과';
+ $('result-deep-cta').hidden=Boolean(share)||state.mode==='deep';$('shared-note').hidden=!share;
+ $('result-details').open=false;
+ const genres=$('genre-results');genres.replaceChildren();picks.slice(0,share?2:state.mode==='deep'?8:2).forEach((item,i)=>{if(!item.genre)return;
+ const row=document.createElement('div');row.className='genre-row';const head=document.createElement('div');const label=document.createElement('span');label.className='genre-label';label.textContent=`${i+1}위 · ${item.genre.name}`;const desc=document.createElement('small');desc.textContent=item.genre.desc;head.append(label,desc);const num=document.createElement('span');num.className='genre-score';num.textContent=item.score===null?'':String(item.score);const bar=document.createElement('div');bar.className='bar-track';const fill=document.createElement('div');fill.className='bar-fill';fill.style.width=`${item.score||0}%`;bar.append(fill);if(item.score===null)bar.hidden=true;row.append(head,num,bar);genres.append(row);
+ });
+ const axes=$('axis-results');axes.replaceChildren();if(!share){Object.entries(result.axes).sort((a,b)=>b[1]-a[1]).slice(0,state.mode==='deep'?8:3).forEach(([k,v])=>{const item=document.createElement('div');item.className='axis-line';const span=document.createElement('span');span.textContent=AXES[k];const track=document.createElement('div');track.className='axis-track';const fill=document.createElement('i');fill.style.width=v+'%';track.append(fill);const b=document.createElement('b');b.textContent=v;item.append(span,track,b);axes.append(item);});}else{const p=document.createElement('p');p.className='fine-print';p.textContent='공유 링크에는 답변과 취향 세부 정보가 들어 있지 않습니다.';axes.append(p);}
+ const margin=!share?picks[0].score-picks[1].score:null;$('result-insight').textContent=share?'공유된 결과는 요약 정보만 표시합니다.':margin<=4?`상위 두 장르의 점수 차이가 ${margin}점으로 작아요. 두 스타일 모두 살펴보세요.`:`${AXES[Object.keys(result.axes).sort((a,b)=>result.axes[b]-result.axes[a])[0]]}에 대한 선호가 상대적으로 강하게 나타났어요.`;
+ $('result-extra-analysis').hidden=Boolean(share)||state.mode!=='deep';
+ if(!share&&state.mode==='deep'){$('deep-plus').textContent='추천을 이해할 때는 점수뿐 아니라 불편을 느낄 조건도 확인하세요. ‘'+AXES[Object.keys(result.axes).sort((a,b)=>result.axes[a]-result.axes[b])[0]]+'’의 우선순위는 비교적 낮았어요. 장르 내부에서도 차종별 차이가 크니 실제로 확인해 보세요.';}
+ const mod=$('model-examples');mod.replaceChildren();picks.slice(0,2).forEach(x=>{if(!x.genre)return;const p=document.createElement('div');p.className='model-item';const b=document.createElement('b');b.textContent=x.genre.name;const small=document.createElement('span');small.textContent=x.genre.models.join(' · ');p.append(b,small);mod.append(p);});
+ renderPersonalitySummary(share);$('share-feedback').textContent='';
+}
+function mbtiParts(){return [['EI','E','I'],['SN','N','S'],['TF','T','F'],['JP','J','P']];}
+function estimateMbti(length){const sum={EI:0,SN:0,TF:0,JP:0};for(let i=0;i<length;i++){const q=PERSONALITY_ITEMS[i];if(state.personality[i]!==null)sum[q.a]+=state.personality[i]*(q.r?-1:1);}const threshold=length===8?2:3;const type=mbtiParts().map(([k,a,b])=>sum[k]>=threshold?a:sum[k]<=-threshold?b:'?').join('');return {type,sum,threshold};}
+function renderPersonalitySummary(shared){const estimated=shared?shared.estimated:state.estimated,manual=shared?shared.self:state.mbtiManual,container=$('mbti-summary');container.replaceChildren();
+ const block=(tag,value,sub)=>{const row=document.createElement('div');row.className='mbti-summary-row';const k=document.createElement('span');k.textContent=tag;const val=document.createElement('strong');val.textContent=value||'—';const caption=document.createElement('small');caption.textContent=sub;row.append(k,val,caption);container.append(row);};
+ block('예상 MBTI',estimated||'미측정',estimated?(shared?'비공식 추정 결과':`${state.estimateLength||8}문항 독자 문항으로 추정한 참고용 결과`):'별도 성격 질문을 완료하면 표시됩니다.');
+ if(manual)block('내가 입력한 MBTI',manual,'본인 입력값 · 공식 검증 아님');
+ const compare=$('mbti-comparison');compare.hidden=!(estimated&&manual);if(estimated&&manual){const matching=Array.from(estimated).filter((s,i)=>s!=='?'&&s===manual[i]).length;const known=Array.from(estimated).filter(x=>x!=='?').length;compare.textContent=`확인 가능한 ${known}개 성격 축 중 ${matching}개가 입력한 유형과 일치했어요. 이는 성격 검사의 정확도 수치가 아니에요.`;}
+ $('mbti-actions').hidden=Boolean(shared);$('mbti-start-label').textContent=state.mode==='deep'?'예상 MBTI 검사 · 20문항':'예상 MBTI 검사 · 8문항';
+ if(!shared&&state.estimateLength===8&&state.mode==='deep')$('mbti-start-label').textContent='예상 MBTI 심화 · 추가 12문항';
+}
+function renderMbti(){const total=mbtiTotal(),at=state.personalityIndex,question=PERSONALITY_ITEMS[at];if(!question){show('result');return;}
+ $('mbti-progress-label').textContent=String(at+1).padStart(2,'0')+' / '+total;$('mbti-question').textContent=question.t;
+ const percent=Math.round(at/total*100);$('mbti-progress-fill').style.width=percent+'%';$('mbti-progress-track').setAttribute('aria-valuenow',String(percent));
+ const list=$('mbti-choices');list.replaceChildren();['전혀 아니다','아니다','보통이다','그렇다','매우 그렇다'].forEach((txt,i)=>{const b=document.createElement('button');b.type='button';b.className='likert-option';b.textContent=txt;b.classList.toggle('chosen',state.personality[at]===i-2);b.setAttribute('aria-pressed',String(state.personality[at]===i-2));b.addEventListener('click',()=>{state.personality[at]=i-2;if(at===total-1){const r=estimateMbti(total);state.estimated=r.type;state.estimateLength=total;show('result');toast('예상 성격 유형을 추가했어요.');}else{state.personalityIndex++;show('mbti',{focus:false});}});list.append(b);});$('mbti-prev').disabled=at===0;
+}
+function renderManual(){const wrap=$('manual-pairs');wrap.replaceChildren();const labels=[['에너지 방향','E','I'],['정보 선호','S','N'],['판단 선호','T','F'],['생활 방식','J','P']];labels.forEach(([tag,a,b],index)=>{const row=document.createElement('div');row.className='manual-pair';const label=document.createElement('span');label.textContent=tag;row.append(label);[a,b].forEach(letter=>{const btn=document.createElement('button');btn.type='button';btn.textContent=letter;btn.classList.toggle('selected',state.manualDraft[index]===letter);btn.setAttribute('aria-pressed',String(state.manualDraft[index]===letter));btn.addEventListener('click',()=>{state.manualDraft[index]=letter;renderManual();persist();});row.append(btn);});wrap.append(row);});}
+function manualSave(){if(state.manualDraft.some(x=>!x)){toast('4개 항목을 모두 골라 주세요.');return;}state.mbtiManual=state.manualDraft.join('');show('result');toast('입력한 MBTI를 별도로 표시했어요.');}
+function shareData(){if(state.shared)return state.sharedData;const r=calculate();return {type:r.type,mode:state.mode,genres:r.genres.slice(0,2).map(x=>({id:x.genre.id})),estimated:state.estimated,self:state.mbtiManual};}
+function allowedMBTI(s){return typeof s==='string'&&s.length===4&&['EI','SN','TF','JP'].every((p,i)=>p.includes(s[i])||s[i]==='?');}
+function parseShared(){const p=new URLSearchParams(location.search);if(!p.has('r')||!p.has('g'))return false;const type=Number(p.get('r')),genres=p.get('g').split(','),mode=p.get('d')==='1'?'deep':'quick';if(!Number.isInteger(type)||type<0||type>15||genres.length!==2||!genres.every(id=>GENRES.some(x=>x.id===id)))return false;
+ state.shared=true;state.sharedData={type,genres:genres.map(id=>({id})),mode,estimated:allowedMBTI(p.get('e'))?p.get('e'):null,self:allowedMBTI(p.get('s'))&&!p.get('s').includes('?')?p.get('s'):null};return true;}
+function shareLink(){const d=shareData(),url=new URL(location.href);url.hash='';url.search='';url.searchParams.set('r',String(d.type));url.searchParams.set('g',d.genres.map(x=>x.id).join(','));if(d.mode==='deep')url.searchParams.set('d','1');if(d.estimated)url.searchParams.set('e',d.estimated);if(d.self)url.searchParams.set('s',d.self);return url.href;}
+async function share(){const link=shareLink();if(navigator.share){try{await navigator.share({title:'RIDE DNA — 내 라이더 유형',text:'나의 라이더 성향을 확인해 보세요.',url:link});$('share-feedback').textContent='공유했어요.';return;}catch(e){if(e.name==='AbortError')return;}}
+ try{await navigator.clipboard.writeText(link);$('share-feedback').textContent='링크를 복사했어요.';}catch{const t=document.createElement('textarea');t.value=link;document.body.append(t);t.select();const ok=document.execCommand('copy');t.remove();$('share-feedback').textContent=ok?'링크를 복사했어요.':link;}}
+function drawCanvas(){const d=shareData(),c=document.createElement('canvas');c.width=1080;c.height=1350;const ctx=c.getContext('2d');if(!ctx){toast('이미지 저장이 지원되지 않아요.');return;}
+ ctx.fillStyle='#111114';ctx.fillRect(0,0,1080,1350);ctx.fillStyle='#d23b4b';ctx.fillRect(0,0,220,12);
+ const tx=(text,x,y,font,color)=>{ctx.font=font;ctx.fillStyle=color;ctx.fillText(text,x,y);};
+ const wrap=(text,y,width,font,line=97,max=2)=>{ctx.font=font;let row='',lines=[];for(const ch of Array.from(text)){if(row&&ctx.measureText(row+ch).width>width){lines.push(row);row=ch;}else row+=ch;}if(row)lines.push(row);lines.slice(0,max).forEach((v,i)=>tx(v,74,y+i*line,font,'#f4eeee'));return y+(Math.min(max,lines.length)-1)*line;};
+ tx('RIDE DNA',74,145,'800 66px system-ui,sans-serif','#f2eeec');tx(d.mode==='deep'?'DEEP RESULT':'QUICK RESULT',74,210,'500 25px system-ui,sans-serif','#bcb2b8');ctx.strokeStyle='#454047';ctx.beginPath();ctx.moveTo(74,253);ctx.lineTo(1000,253);ctx.stroke();
+ tx('나의 라이더 유형',74,319,'600 29px system-ui,sans-serif','#e7a2af');const title=TYPES[d.type]?.[0]||'나의 라이더 유형';const y=wrap(title,442,928,'750 85px system-ui,sans-serif',109,2);tx(TYPES[d.type]?.[1]||'',74,Math.max(580,y+100),'560 27px system-ui,sans-serif','#d1c6cc');
+ ctx.beginPath();ctx.moveTo(74,680);ctx.lineTo(1000,680);ctx.stroke();tx('추천 바이크 스타일',74,752,'540 26px system-ui,sans-serif','#bdb3bb');wrap(GENRES.find(x=>x.id===d.genres[0]?.id)?.name||'—',835,920,'700 58px system-ui,sans-serif',70,2);
+ tx('두 번째 스타일',74,974,'500 25px system-ui,sans-serif','#a99da5');tx(GENRES.find(x=>x.id===d.genres[1]?.id)?.name||'—',74,1030,'650 38px system-ui,sans-serif','#f2eeee');
+ if(d.estimated)tx('예상 MBTI   '+d.estimated,74,1135,'650 31px system-ui,sans-serif','#e5a7af');
+ if(d.self)tx('내 MBTI   '+d.self,74,d.estimated?1183:1135,'520 27px system-ui,sans-serif','#c0b3bb');
+ ctx.fillStyle='#61575d';ctx.fillRect(74,1220,925,1);tx('RIDE DNA  ·  무료 · 비공식 취향 테스트',74,1291,'450 23px system-ui,sans-serif','#b7afb5');
+ try{const a=document.createElement('a');a.href=c.toDataURL('image/png');a.download='RIDE_DNA_RESULT.png';document.body.append(a);a.click();a.remove();toast('결과 이미지가 저장됐어요.');}catch{toast('이미지 저장에 실패했어요.');}}
+function action(name){if(name==='home'){state.shared=false;state.sharedData=null;history.replaceState({rideDna:true,screen:'home'},'',location.pathname);show('home');return;}
+ if(name==='choose'){show('choose');return;}if(name==='quick'||name==='deep'){chooseMode(name);return;}
+ if(name==='resume'){show('quiz');return;}if(name==='restart'){state.shared=false;state.sharedData=null;state=blankState();history.replaceState({rideDna:true,screen:'choose'},'',location.pathname);show('choose');return;}
+ if(name==='upgrade'){upgrade();return;}if(name==='result'){show('result');return;}
+ if(name==='mbti-test'){if(state.estimateLength===8&&state.mode==='deep'&&state.personality.slice(0,8).every(v=>v!==null)){state.personalityIndex=8;}else{state.personalityIndex=0;state.personality=Array(20).fill(null);}show('mbti');return;}
+ if(name==='mbti-manual'){state.manualDraft=state.mbtiManual?state.mbtiManual.split(''):[null,null,null,null];show('manual');return;}}
+document.querySelectorAll('[data-action]').forEach(b=>b.addEventListener('click',()=>action(b.dataset.action)));
+$('quiz-exit').addEventListener('click',quit);$('quiz-prev').addEventListener('click',prev);
+$('exit-cancel').addEventListener('click',()=>$('exit-dialog').close());$('exit-confirm').addEventListener('click',()=>{$('exit-dialog').close();show('home');});
+$('mbti-prev').addEventListener('click',()=>{state.personalityIndex=Math.max(0,state.personalityIndex-1);show('mbti');});
+$('manual-save').addEventListener('click',manualSave);$('share-button').addEventListener('click',share);$('image-button').addEventListener('click',drawCanvas);
+window.addEventListener('popstate',e=>{if(!e.state?.rideDna||!screens[e.state.screen])return;const h=e.state;if(h.mode&&MODE_CONFIG[h.mode])state.mode=h.mode;
+ if(Number.isInteger(h.index))state.index=Math.max(0,Math.min(h.index,40));if(Number.isInteger(h.adaptIndex))state.adaptIndex=Math.max(0,Math.min(h.adaptIndex,state.adaptive.length-1));if(Number.isInteger(h.personalityIndex))state.personalityIndex=Math.max(0,Math.min(h.personalityIndex,19));
+ if(h.screen==='quiz'&&state.completed&&!state.shared){
+  state.completed=false;state.index=Math.min(state.index,answerTotal()-1);state.adaptive=[];state.adaptAnswers=[];state.adaptIndex=0;
  }
- if(focus){const target=screens[screen].querySelector('h1[tabindex],h2[tabindex]');if(target)requestAnimationFrame(()=>target.focus({preventScroll:true}));}
-}
-function start(){
- state={completed:false,screen:'quiz',answers:Array(20).fill(null),qIndex:0,adaptive:[],adaptIndex:0,adaptAnswers:[],personality:Array(12).fill(null),personalityIndex:0,mbti:null,mbtiSource:null,shared:false};
- history.replaceState({rideDna:true,screen:'home',qIndex:0,adaptIndex:0,personalityIndex:0},'',location.pathname);
- show('quiz');
-}
-function quitQuiz(){
- const modal=$('exit-dialog');
- if(typeof modal.showModal==='function')modal.showModal();
- else if(confirm('테스트를 나갈까요? 답변은 이 브라우저에 보관됩니다.'))show('home');
-}
-let answerLocked=false,answerTimer=null;
-function renderQuestion(){clearTimeout(answerTimer);answerLocked=false;const isExtra=state.qIndex>=QUESTIONS.length;let q;
- if(!isExtra){q=QUESTIONS[state.qIndex];$('quiz-stage').textContent='라이더 성향';$('quiz-progress-label').textContent=String(state.qIndex+1).padStart(2,'0')+' / 20';$('quiz-progress').setAttribute('aria-valuenow',String(Math.round((state.qIndex/20)*100)));$('quiz-progress-fill').style.width=(state.qIndex/20*100)+'%';$('quiz-helper').textContent='답변을 선택하면 다음 질문으로 이동해요.';}else{q=state.adaptive[state.adaptIndex];if(!q){finish();return;}$('quiz-stage').textContent='추가 취향 확인';$('quiz-progress-label').textContent=String(state.adaptIndex+1)+' / '+state.adaptive.length;$('quiz-progress').setAttribute('aria-valuenow',String(Math.round(100*(state.adaptIndex+1)/(state.adaptive.length+1))));$('quiz-progress-fill').style.width=(state.adaptIndex+1)/(state.adaptive.length+1)*100+'%';$('quiz-helper').textContent='가까운 두 장르를 구분하기 위한 추가 질문이에요.';}
- $('question-category').textContent=isExtra?'선호가 가까운 장르가 있어요':q.c;$('question-title').textContent=isExtra?'둘 중 어느 쪽이 조금 더 끌리나요?':q.t;$('question-hint').textContent=isExtra?'어느 쪽도 아니라면 비슷하다고 선택해도 괜찮아요.':q.h;
- const choices=isExtra?[q.options[0],q.options[1],'두 가지 모두 비슷하게 끌린다']:q.a.map(x=>x.label);const el=$('answers');el.replaceChildren();choices.forEach((v,i)=>{const b=document.createElement('button');b.type='button';b.className='answer';b.append(document.createTextNode(v));const selected=isExtra?state.adaptAnswers[state.adaptIndex]:state.answers[state.qIndex];if(selected===i)b.classList.add('chosen');b.setAttribute('aria-pressed',selected===i?'true':'false');b.addEventListener('click',()=>chooseAnswer(i));el.append(b);});$('quiz-prev').disabled=state.qIndex===0;
-}
-function chooseAnswer(i){
- if(state.screen!=='quiz'||answerLocked||!Number.isInteger(i))return;
- const allowed=state.qIndex<20?4:3;
- if(i<0||i>=allowed)return;
- answerLocked=true;
- const selected=$('answers').children[i];
- if(selected){document.querySelectorAll('#answers .answer').forEach(b=>{b.classList.remove('chosen');b.setAttribute('aria-pressed','false');});selected.classList.add('chosen');selected.setAttribute('aria-pressed','true');}
- answerTimer=setTimeout(()=>commitAnswer(i),290);
-}
-function commitAnswer(i){if(state.qIndex<20){state.answers[state.qIndex]=i;if(state.qIndex<19){state.qIndex++;show('quiz',{focus:false});return;}initAdaptive();}else{state.adaptAnswers[state.adaptIndex]=i;if(state.adaptIndex<state.adaptive.length-1){state.adaptIndex++;show('quiz',{focus:false});return;}if(state.adaptive.length===2){const res=calculate();if(res.genres[0].score-res.genres[1].score<=4){const next=buildAdaptive(res,2);if(next.length){state.adaptive.push(...next);state.adaptIndex++;state.qIndex=20;show('quiz',{focus:false});return;}}}finish();}}
-function initAdaptive(){const res=calculate();if(res.genres[0].score-res.genres[1].score<=8){state.adaptive=buildAdaptive(res,2);state.adaptIndex=0;state.adaptAnswers=[];if(state.adaptive.length){state.qIndex=20;show('quiz',{focus:false});return;}}finish();}
-function buildAdaptive(res,count){const a=res.genres[0].genre,b=res.genres[1].genre;const used=new Set(state.adaptive.map(x=>x.axis));const order=K.map(k=>({k,dist:Math.abs(a.profile[k]-b.profile[k])})).filter(x=>x.dist>=15&&!used.has(x.k)).sort((x,y)=>y.dist-x.dist);return order.slice(0,count).map(x=>({axis:x.k,options:ADAPTIVE_AXES[x.k]}));}
-function rawAxes(){const sum=Object.fromEntries(K.map(k=>[k,0]));let solo=0;QUESTIONS.forEach((q,i)=>{const c=q.a[state.answers[i]];if(!c)return;Object.entries(c.w).forEach(([k,v])=>sum[k]+=v);solo+=c.solo;});const peak=Math.max(...Object.values(sum),1);const axes=Object.fromEntries(K.map(k=>[k,Math.round(12+88*(sum[k]/peak))]));state.adaptive.forEach((q,i)=>{const ans=state.adaptAnswers[i];if(ans===0)axes[q.axis]=Math.min(100,axes[q.axis]+10);if(ans===1)axes[q.axis]=Math.max(0,axes[q.axis]-10);});return {axes,solo};}
-function calculate(){const {axes,solo}=rawAxes();const weighted={city:1.1,touring:1.1,agility:1.15,comfort:1.1,versatility:1.2,expression:.94,practicality:1.04,sportiness:1.05};const genres=GENRES.map(genre=>{let diff=0,n=0;K.forEach(k=>{diff+=weighted[k]*(axes[k]-genre.profile[k])**2;n+=weighted[k];});const score=Math.max(0,Math.round(100-Math.sqrt(diff/n)));return {genre,score};}).sort((a,b)=>b.score-a.score||a.genre.id.localeCompare(b.genre.id));
- const mid={explore:(axes.touring+axes.versatility-axes.city-axes.practicality)/2,active:(axes.agility+axes.sportiness)/2-axes.comfort,express:axes.expression-axes.practicality,solo};const flags=[mid.explore>8,mid.active>8,mid.express>8,solo>=2];const idx=flags.reduce((n,f,i)=>n+(f?(8>>i):0),0);const neutral=Object.entries(mid).filter(([k,v])=>Math.abs(v)<(k==='solo'?2:8)).map(([k])=>k);return {axes,genres,type:idx,neutral};}
-function finish(){state.qIndex=20;state.completed=true;show('result');}
-function renderResult(){const shared=state.shared&&state.sharedData;const res=shared?state.sharedData:calculate();const type=TYPES[res.type]||TYPES[0];$('result-serial').textContent='TYPE '+String(res.type+1).padStart(2,'0')+' / 16';$('result-title').textContent=type[0];$('result-english').textContent=type[1];$('result-description').textContent=type[2]+(!shared&&res.neutral.length?' 여러 성향이 비슷하게 나타나 결과를 혼합형으로도 볼 수 있어요.':'');$('shared-note').hidden=!shared;
- const top=shared?GENRES.find(g=>g.id===res.genres[0]?.id):res.genres[0]?.genre;
- const second=shared?GENRES.find(g=>g.id===res.genres[1]?.id):res.genres[1]?.genre;
- $('result-best-genre').textContent=top?.name||'—';
- $('result-next-genre').textContent=second?.name||'—';
- const genreEl=$('genre-results');genreEl.replaceChildren();const picks=shared?res.genres:res.genres.slice(0,2);picks.forEach((g,i)=>{const item=shared?GENRES.find(x=>x.id===g.id):g.genre;if(!item)return;const s=shared?null:g.score;const e=document.createElement('div');e.className='genre-row';e.innerHTML='<div><span class="genre-label"></span><small></small></div><span class="genre-score"></span><div class="bar-track"><div class="bar-fill"></div></div>';e.querySelector('.genre-label').textContent=(i?'두 번째 취향 · ':'가장 가까운 취향 · ')+item.name;e.querySelector('small').textContent=item.desc;e.querySelector('.genre-score').textContent=s===null?'—':s;e.querySelector('.genre-score').append(Object.assign(document.createElement('sup'),{textContent:s===null?'':'/100'}));e.querySelector('.bar-fill').style.width=(s===null?0:s)+'%';if(shared)e.querySelector('.bar-track').hidden=true;genreEl.append(e);});
- const ax=$('axis-results');ax.replaceChildren();$('axis-note').textContent=shared?'공유 링크에는 개별 설문 응답과 선호 지표가 포함되지 않아요.':'응답에서 상대적으로 강하게 나타난 선호입니다. 절대적인 능력이나 성격 점수가 아니에요.';if(!shared){Object.entries(res.axes).sort((a,b)=>b[1]-a[1]).slice(0,5).forEach(([k,v])=>{const el=document.createElement('div');el.className='axis-line';const label=document.createElement('span');label.textContent=AXES[k];const track=document.createElement('div');track.className='axis-track';const fill=document.createElement('i');fill.style.width=v+'%';track.append(fill);const score=document.createElement('b');score.textContent=v;el.append(label,track,score);ax.append(el);});}else{const p=document.createElement('p');p.className='fine-print';p.textContent='이 링크는 결과 요약만 공유합니다. 나의 취향 지도를 보려면 직접 테스트해 보세요.';ax.append(p);}
- const mb=shared?res.mbti:state.mbti;$('mbti-result').hidden=!mb;$('mbti-result').replaceChildren();if(mb){$('mbti-result').append(document.createTextNode(mb),Object.assign(document.createElement('small'),{textContent:shared?'공유자가 선택적으로 포함한 성격 유형':state.mbtiSource==='manual'?'본인이 직접 선택한 MBTI':'12문항 독자 검사 기반 · 비공식 경향 추정'}));} document.querySelectorAll('.mbti-actions').forEach(x=>x.hidden=Boolean(shared));
- const modelEl=$('model-examples');modelEl.replaceChildren();const div=document.createElement('div');div.className='model-list';picks.forEach((g,i)=>{const genre=shared?GENRES.find(x=>x.id===g.id):g.genre;if(!genre)return;const p=document.createElement('div');p.className='model-item';const t=document.createElement('b');t.textContent=genre.name;const f=document.createElement('span');f.textContent=genre.models.join(' · ');p.append(t,f);div.append(p);});modelEl.append(div);$('share-feedback').textContent='';}
-function selectPrev(){clearTimeout(answerTimer);answerLocked=false;if(state.qIndex===0)return;if(state.qIndex>=20){if(state.adaptIndex>0){state.adaptIndex--;}else{state.qIndex=19;}}else{state.qIndex--;}show('quiz');$('question-title').focus({preventScroll:true});}
-function renderMbti(){
- $('mbti-progress-label').textContent=String(state.personalityIndex+1).padStart(2,'0')+' / 12';
- const percent=state.personalityIndex/12*100;
- $('mbti-progress-fill').style.width=percent+'%';
- $('mbti-progress-track').setAttribute('aria-valuenow',String(Math.round(percent)));
- const q=MBTI_QUESTIONS[state.personalityIndex];$('mbti-question').textContent=q.t;
- const wrap=$('mbti-choices');wrap.replaceChildren();
- ['전혀 아니다','아니다','보통이다','그렇다','매우 그렇다'].forEach((label,i)=>{
-  const b=document.createElement('button');b.type='button';b.className='likert-option';
-  const number=document.createElement('strong');number.textContent=String(i+1);
-  const name=document.createElement('span');name.textContent=label;b.append(number,name);
-  const was=state.personality[state.personalityIndex]===i-2;
-  b.classList.toggle('chosen',was&&state.personality[state.personalityIndex]!==null);
-  b.setAttribute('aria-pressed',b.classList.contains('chosen')?'true':'false');
-  b.addEventListener('click',()=>{
-   state.personality[state.personalityIndex]=i-2;
-   if(state.personalityIndex===11){finishMbti();return;}
-   state.personalityIndex++;show('mbti');
-  });wrap.append(b);
- });$('mbti-prev').disabled=state.personalityIndex===0;
-}
-function finishMbti(){const sum={EI:0,SN:0,TF:0,JP:0};MBTI_QUESTIONS.forEach((q,i)=>{sum[q.a]+=(state.personality[i]??0)*(q.r?-1:1);});const parts=[['EI','E','I'],['SN','N','S'],['TF','T','F'],['JP','J','P']];state.mbti=parts.map(([k,pos,neg])=>sum[k]>=2?pos:sum[k]<=-2?neg:'?').join('');state.mbtiSource='estimated';show('result');toast(state.mbti.includes('?')?'비슷한 성향은 ?로 표시했어요.':'성격 경향 결과를 추가했어요.');}
-function renderManual(){const pairs=[['에너지 방향','E','I'],['정보를 보는 방식','S','N'],['판단에서 우선하는 것','T','F'],['생활 방식','J','P']];const wrap=$('manual-pairs');wrap.replaceChildren();pairs.forEach(([label,l,r],i)=>{const row=document.createElement('div');row.className='manual-pair';const s=document.createElement('span');s.textContent=label;const start=document.createElement('button'),end=document.createElement('button');start.type=end.type='button';start.textContent=l;end.textContent=r;let val=state.manualDraft?.[i];start.classList.toggle('selected',val===l);end.classList.toggle('selected',val===r);start.addEventListener('click',()=>updateManual(i,l));end.addEventListener('click',()=>updateManual(i,r));row.append(s,start,end);wrap.append(row);});}
-function updateManual(i,v){if(!state.manualDraft)state.manualDraft=[null,null,null,null];state.manualDraft[i]=v;renderManual();save();}
-function saveManual(){if(!state.manualDraft||state.manualDraft.some(x=>!x)){toast('4가지 항목을 모두 선택해 주세요.');return;}state.mbti=state.manualDraft.join('');state.mbtiSource='manual';show('result');toast('입력한 MBTI를 결과에 추가했어요.');}
-function toast(message){const el=$('toast');el.textContent=message;el.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>el.hidden=true,3500);}
-function shareData(){if(state.shared)return state.sharedData;const res=calculate();return {type:res.type,genres:res.genres.slice(0,2).map(x=>({id:x.genre.id})),mbti:state.mbti||null};}
-function buildShareLink(){const v=shareData();const url=new URL(location.href);url.search='';url.hash='';url.searchParams.set('r',String(v.type));url.searchParams.set('g',v.genres.map(x=>x.id).join(','));if(v.mbti)url.searchParams.set('m',v.mbti);return url.toString();}
-async function share(){const url=buildShareLink();if(navigator.share){try{await navigator.share({title:'RIDE DNA — 내 라이더 유형',text:'나의 라이더 스타일을 확인해 보세요.',url});$('share-feedback').textContent='결과를 공유했어요.';return;}catch(e){if(e.name==='AbortError')return;}}try{await navigator.clipboard.writeText(url);$('share-feedback').textContent='결과 링크를 복사했어요.';}catch{const t=document.createElement('textarea');t.value=url;document.body.append(t);t.select();const ok=document.execCommand('copy');t.remove();$('share-feedback').textContent=ok?'결과 링크를 복사했어요.':url;}}
-function downloadImage(){
- const data=shareData(),canvas=document.createElement('canvas');
- canvas.width=1080;canvas.height=1350;
- const c=canvas.getContext('2d');if(!c){toast('이 브라우저에서는 이미지 저장이 지원되지 않아요.');return;}
- const x=78,edge=1002;
- const draw=(t,y,font,color)=>{c.fillStyle=color;c.font=font;c.fillText(String(t),x,y);};
- const wrap=(value,top,maxWidth,font,lineHeight,maxLines=2)=>{
-  c.font=font;
-  let current='',lines=[];
-  for(const letter of Array.from(value)){
-   if(current&&c.measureText(current+letter).width>maxWidth){lines.push(current);current=letter;}
-   else current+=letter;
-  }
-  if(current)lines.push(current);
-  const selected=lines.slice(0,maxLines);
-  selected.forEach((part,i)=>draw(part,top+i*lineHeight,font,'#f2eeec'));
-  return top+(selected.length-1)*lineHeight;
- };
- c.fillStyle='#111114';c.fillRect(0,0,1080,1350);
- c.fillStyle='#242128';c.fillRect(0,0,1080,14);
- c.fillStyle='#d23b4b';c.fillRect(0,0,275,14);
- draw('RIDE DNA',150,'850 70px system-ui, sans-serif','#f2eeec');
- c.textAlign='right';c.fillStyle='#b9acb3';c.font='550 27px system-ui,sans-serif';
- c.fillText('TYPE '+String(data.type+1).padStart(2,'0')+' / 16',edge,145);c.textAlign='left';
- c.strokeStyle='#474048';c.lineWidth=2;c.beginPath();c.moveTo(x,210);c.lineTo(edge,210);c.stroke();
- draw('나의 라이더 유형',292,'600 28px system-ui,sans-serif','#db969f');
- const title=TYPES[data.type]?.[0]||'나의 라이더 유형';
- const endTitle=wrap(title,421,915,'760 86px system-ui,sans-serif',113,2);
- draw(TYPES[data.type]?.[1]||'',Math.max(570,endTitle+95),'620 29px system-ui,sans-serif','#d2bdc4');
- c.strokeStyle='#474048';c.beginPath();c.moveTo(x,690);c.lineTo(edge,690);c.stroke();
- draw('가장 가까운 바이크 스타일',766,'540 27px system-ui,sans-serif','#ada3aa');
- const gs=data.genres.map(g=>GENRES.find(x=>x.id===g.id)?.name).filter(Boolean);
- wrap(gs[0]||'—',856,920,'760 62px system-ui,sans-serif',72,2);
- draw('함께 추천하는 스타일',965,'540 26px system-ui,sans-serif','#ada3aa');
- wrap(gs[1]||'—',1034,920,'660 43px system-ui,sans-serif',56,2);
- if(data.mbti)draw('성격 유형  '+data.mbti,1143,'610 28px system-ui,sans-serif','#e7b0b8');
- c.fillStyle='#37323a';c.fillRect(x,1213,edge-x,2);
- draw('당신만의 라이딩 취향을 찾아보세요.',1267,'500 25px system-ui,sans-serif','#aba0a8');
- draw('RIDE DNA  ·  비공식 취향 테스트',1310,'480 20px system-ui,sans-serif','#898188');
- try{const a=document.createElement('a');a.href=canvas.toDataURL('image/png');a.download='RIDE_DNA_RESULT.png';document.body.append(a);a.click();a.remove();toast('결과 이미지를 저장했어요.');}
- catch{toast('이미지 저장에 실패했어요. 다시 시도해 주세요.');}
-}
-function parseShared(){const p=new URLSearchParams(location.search);if(!p.has('r')||!p.has('g'))return false;const n=Number(p.get('r'));const ids=p.get('g').split(',');const mb=p.get('m');if(!Number.isInteger(n)||n<0||n>=16||ids.length!==2||!ids.every(x=>GENRES.some(g=>g.id===x)))return false;const validMb=mb&&/^[EINSFTJP?]{4}$/.test(mb)&&["EI?".includes(mb[0]),"SN?".includes(mb[1]),"TF?".includes(mb[2]),"JP?".includes(mb[3])].every(Boolean)?mb:null;state.shared=true;state.sharedData={type:n,genres:ids.map(id=>({id})),mbti:validMb};return true;}
-function action(name){if(name==='home'){show('home');return;}if(name==='start'){if(hasUnfinishedQuiz()){show('quiz');return;}start();return;}if(name==='restart'){start();return;}if(name==='result'){show('result');return;}if(name==='mbti-test'){state.personality=Array(12).fill(null);state.personalityIndex=0;show('mbti');return;}if(name==='mbti-manual'){state.manualDraft=state.mbtiSource==='manual'&&state.mbti?state.mbti.split(''):[null,null,null,null];show('manual');return;}}
-document.querySelectorAll('[data-action]').forEach(el=>el.addEventListener('click',()=>action(el.dataset.action)));$('quiz-exit').addEventListener('click',quitQuiz);$('quiz-prev').addEventListener('click',selectPrev);$('mbti-prev').addEventListener('click',()=>{state.personalityIndex=Math.max(0,state.personalityIndex-1);show('mbti');$('mbti-question').focus({preventScroll:true});});$('manual-save').addEventListener('click',saveManual);$('share-button').addEventListener('click',share);$('image-button').addEventListener('click',downloadImage);
-document.addEventListener('keydown',e=>{if($('exit-dialog').open||e.altKey||e.metaKey||e.ctrlKey||e.target.closest('input,select,textarea'))return;const k=Number(e.key);if(state.screen==='quiz'&&Number.isInteger(k)&&k>=1&&k<= (state.qIndex>=20?3:4)){chooseAnswer(k-1);e.preventDefault();}if(state.screen==='mbti'&&k>=1&&k<=5){const b=$('mbti-choices').children[k-1];if(b)b.click();}});
-$('exit-cancel').addEventListener('click',()=>$('exit-dialog').close());
-$('exit-confirm').addEventListener('click',()=>{$('exit-dialog').close();show('home');});
-window.addEventListener('popstate',e=>{
- const r=e.state;if(!r?.rideDna||!screens[r.screen])return;
- if(Number.isInteger(r.qIndex))state.qIndex=Math.max(0,Math.min(20,r.qIndex));
- if(Number.isInteger(r.adaptIndex))state.adaptIndex=Math.max(0,Math.min(Math.max(0,state.adaptive.length-1),r.adaptIndex));
- if(Number.isInteger(r.personalityIndex))state.personalityIndex=Math.max(0,Math.min(11,r.personalityIndex));
- show(r.screen,{nav:'silent'});
+ if(h.screen==='result'&&!state.completed&&!state.shared){
+  if(state.answers.slice(0,answerTotal()).every(a=>a!==null))state.completed=true;
+  else {show('home',{nav:'silent'});return;}
+ }
+ show(h.screen,{nav:'silent'});
 });
-restore();
-if(parseShared())show('result',{nav:'replace',focus:false});
-else {state.shared=false;show(state.screen,{nav:'replace',focus:false});}
+restore();if(parseShared())show('result',{nav:'replace',focus:false});else show(state.screen,{nav:'replace',focus:false});
