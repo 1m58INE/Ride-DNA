@@ -4,25 +4,25 @@ const K=['city','touring','agility','comfort','versatility','expression','practi
 const AXES={city:'도심 활용',touring:'여행 지향',agility:'가벼운 조작감',comfort:'편안함',versatility:'다양한 길',expression:'디자인·감성',practicality:'실용성',sportiness:'스포티함'};
 const option=(label,w={},solo=0)=>({label,w,solo});
 const QUESTIONS=[
-  {c:'당신의 주말',t:'하루가 통째로 비었다면, 어디로 향할까요?',h:'바이크를 아직 타지 않아도 상상해서 선택해 주세요.',a:[option('동네와 도심을 가볍게 돌아본다',{city:3,practicality:2}),option('먼 곳의 풍경을 보러 떠난다',{touring:3,comfort:1}),option('굽이진 포장도로에서 조작의 재미를 느낀다',{agility:3,sportiness:2}),option('처음 가보는 낯선 길을 찾아본다',{versatility:3,touring:2})]},
-  {c:'선택의 기준',t:'바이크를 고를 때 가장 먼저 확인할 것은?',h:'정답보다는 나에게 중요한 조건을 생각해 보세요.',a:[option('매일 타기 편한지',{city:2,practicality:3}),option('보기만 해도 마음이 가는 디자인인지',{expression:3}),option('몸에 맞고 오래 타도 편안한지',{comfort:3,touring:1}),option('내가 원하는 조작감을 내는지',{agility:2,sportiness:3})]},
-  {c:'이동의 이유',t:'평소 이동할 일이 생기면 어떤 쪽이 더 끌리나요?',h:'상상 속에서 가장 현실적인 내 모습으로 답해 주세요.',a:[option('빠르고 간편하게 목적지에 도착하는 것',{city:3,practicality:3}),option('가는 길 자체를 즐기며 돌아가는 것',{touring:3,expression:1}),option('조작이 재미있는 길을 일부러 고르는 것',{agility:3,sportiness:2}),option('평소와 다른 길을 경험하는 것',{versatility:3,touring:1})]},
-  {c:'우선순위',t:'두 조건이 충돌한다면 무엇을 우선할까요?',h:'모두 만족시킬 수 없다면 가장 포기하기 어려운 것.',a:[option('연료비·관리 부담을 줄이는 것',{practicality:3,city:1}),option('가볍고 즉각적인 반응',{agility:3,sportiness:1}),option('편안한 자세와 피로 감소',{comfort:3,touring:1}),option('마음에 드는 외형과 분위기',{expression:3})]},
-  {c:'나의 페이스',t:'달리는 동안 가장 만족스러운 순간은?',h:'안전한 도로 주행을 전제로 생각해 주세요.',a:[option('일상에 자연스럽게 녹아드는 순간',{city:2,practicality:2}),option('좋은 풍경을 길게 바라보는 순간',{touring:3,comfort:1}),option('정확한 조작으로 코너를 부드럽게 지난 순간',{agility:3,sportiness:2}),option('전혀 새로운 장소를 발견한 순간',{versatility:3})]},
-  {c:'함께하는 방식',t:'라이딩 약속을 잡는다면?',h:'실제 라이딩 경험이 없다면 여행이나 드라이브를 떠올려도 좋아요.',a:[option('혼자 조용히 나만의 속도로 움직인다',{touring:1,expression:1},2),option('소수의 친구와 적당히 맞춰 달린다',{comfort:1,practicality:1},-1),option('여럿이 목적지를 정하고 움직인다',{touring:2,versatility:1},-2),option('그날의 기분에 따라 혼자 또는 함께 간다',{city:1,versatility:1},0)]},
-  {c:'바이크의 자세',t:'어떤 승차 자세가 더 끌리나요?',h:'실제 편안함은 개인의 신체 조건과 차종에 따라 달라요.',a:[option('일상에서 다루기 쉬운 자연스러운 자세',{city:2,practicality:2,comfort:1}),option('상체를 숙이고 조작에 집중하는 자세',{sportiness:3,agility:2}),option('상체를 세우고 시야가 탁 트인 자세',{touring:1,versatility:2,comfort:2}),option('여유롭게 앉아 풍경을 즐기는 자세',{comfort:3,expression:1})]},
-  {c:'포기할 수 없는 것',t:'네 가지 중 하나를 꼭 챙긴다면?',h:'모든 것을 갖춘 바이크는 드물어요.',a:[option('적은 관리 부담',{practicality:3,city:1}),option('긴 주행에도 덜 피곤한 환경',{comfort:3,touring:2}),option('시선을 끄는 디자인',{expression:3,sportiness:1}),option('차체와 가까워지는 선명한 조작감',{agility:3,sportiness:2})]},
+  {c:'당신의 주말',t:'쉬는 날 바이크를 타고 어디로 가고 싶나요?',h:'바이크를 아직 타지 않아도 상상해서 선택해 주세요.',a:[option('동네와 도심을 가볍게 돌아본다',{city:3,practicality:2}),option('먼 곳의 풍경을 보러 떠난다',{touring:3,comfort:1}),option('굽이진 포장도로에서 조작의 재미를 느낀다',{agility:3,sportiness:2}),option('처음 가보는 낯선 길을 찾아본다',{versatility:3,touring:2})]},
+  {c:'선택의 기준',t:'바이크를 고른다면 무엇을 가장 먼저 볼까요?',h:'정답보다는 나에게 중요한 조건을 생각해 보세요.',a:[option('매일 타기 편한지',{city:2,practicality:3}),option('보기만 해도 마음이 가는 디자인인지',{expression:3}),option('몸에 맞고 오래 타도 편안한지',{comfort:3,touring:1}),option('내가 원하는 조작감을 내는지',{agility:2,sportiness:3})]},
+  {c:'이동의 이유',t:'바이크를 타고 이동할 때 어떤 점이 더 좋나요?',h:'상상 속에서 가장 현실적인 내 모습으로 답해 주세요.',a:[option('빠르고 간편하게 목적지에 도착하는 것',{city:3,practicality:3}),option('가는 길 자체를 즐기며 돌아가는 것',{touring:3,expression:1}),option('조작이 재미있는 길을 일부러 고르는 것',{agility:3,sportiness:2}),option('가본 적 없는 길을 가 보는 것',{versatility:3,touring:1})]},
+  {c:'우선순위',t:'모두 가질 수 없다면 무엇을 가장 중요하게 볼까요?',h:'모두 만족시킬 수 없다면 가장 포기하기 어려운 것.',a:[option('연료비·관리 부담을 줄이는 것',{practicality:3,city:1}),option('가볍고 즉각적인 반응',{agility:3,sportiness:1}),option('편안한 자세와 피로 감소',{comfort:3,touring:1}),option('마음에 드는 외형과 분위기',{expression:3})]},
+  {c:'나의 페이스',t:'달리는 동안 가장 만족스러운 순간은?',h:'안전한 도로 주행을 전제로 생각해 주세요.',a:[option('평소 이동이 더 편해졌을 때',{city:2,practicality:2}),option('좋은 풍경을 길게 바라보는 순간',{touring:3,comfort:1}),option('정확한 조작으로 코너를 부드럽게 지난 순간',{agility:3,sportiness:2}),option('전혀 새로운 장소를 발견한 순간',{versatility:3})]},
+  {c:'함께하는 방식',t:'라이딩 약속을 잡는다면?',h:'실제 라이딩 경험이 없다면 여행이나 드라이브를 떠올려도 좋아요.',a:[option('혼자 조용히 나만의 속도로 움직인다',{touring:1,expression:1},2),option('소수의 친구와 적당히 맞춰 달린다',{comfort:1,practicality:1},-1),option('여럿이 목적지를 정하고 움직인다',{touring:2,versatility:1},-2),option('상황에 따라 혼자 타거나 함께 탄다',{city:1,versatility:1},0)]},
+  {c:'바이크의 자세',t:'어떤 승차 자세가 더 끌리나요?',h:'실제 편안함은 개인의 신체 조건과 차종에 따라 달라요.',a:[option('일상에서 다루기 쉬운 편한 자세',{city:2,practicality:2,comfort:1}),option('상체를 숙이고 조작에 집중하는 자세',{sportiness:3,agility:2}),option('상체를 세우고 시야가 탁 트인 자세',{touring:1,versatility:2,comfort:2}),option('여유롭게 앉아 풍경을 즐기는 자세',{comfort:3,expression:1})]},
+  {c:'포기할 수 없는 것',t:'다음 중 하나만 지킬 수 있다면?',h:'모든 것을 갖춘 바이크는 드물어요.',a:[option('적은 관리 부담',{practicality:3,city:1}),option('오래 타도 덜 피곤한 것',{comfort:3,touring:2}),option('시선을 끄는 디자인',{expression:3,sportiness:1}),option('내 뜻대로 움직이는 조작감',{agility:3,sportiness:2})]},
   {c:'장소의 선택',t:'다음 중 더 가고 싶은 장소는?',h:'실제 도로 주행이 허용된 장소만 상정해 주세요.',a:[option('도심의 작은 카페와 골목',{city:3,expression:1}),option('바닷가를 따라 길게 이어지는 도로',{touring:3,comfort:1}),option('포장 상태가 좋은 굽잇길',{agility:3,sportiness:2}),option('산길과 지방도, 변화가 많은 풍경',{versatility:3,touring:1})]},
-  {c:'나의 일상',t:'바이크를 소유한다면 가장 자주 쓰는 용도는?',h:'현재 사용 방식이 아닌 미래의 희망 용도로 답해도 좋아요.',a:[option('출퇴근과 가벼운 이동',{city:3,practicality:3}),option('주말 중·장거리 여행',{touring:3,comfort:2}),option('주말의 짧고 몰입감 있는 라이딩',{sportiness:3,agility:2}),option('정해두지 않고 여러 곳을 다니기',{versatility:2,expression:1,touring:1})]},
-  {c:'내 취향',t:'바이크가 나를 표현한다면 어떤 느낌일까요?',h:'디자인을 잘 몰라도 느낌만으로 충분해요.',a:[option('수수하지만 일상에서 든든한 존재',{practicality:3,city:1}),option('정제되고 날렵한 존재',{sportiness:2,agility:1,expression:2}),option('시간이 지나도 멋있는 존재',{expression:3,comfort:1}),option('어디든 데려다줄 것 같은 존재',{versatility:2,touring:2})]},
+  {c:'나의 일상',t:'바이크를 갖게 된다면 주로 언제 타고 싶나요?',h:'현재 사용 방식이 아닌 미래의 희망 용도로 답해도 좋아요.',a:[option('출퇴근과 가벼운 이동',{city:3,practicality:3}),option('주말 중·장거리 여행',{touring:3,comfort:2}),option('주말의 짧고 몰입감 있는 라이딩',{sportiness:3,agility:2}),option('정해두지 않고 여러 곳을 다니기',{versatility:2,expression:1,touring:1})]},
+  {c:'내 취향',t:'어떤 모습의 바이크가 가장 마음에 드나요?',h:'디자인을 잘 몰라도 느낌만으로 충분해요.',a:[option('실용적이고 부담 없이 탈 수 있는 모습',{practicality:3,city:1}),option('깔끔하고 날렵한 모습',{sportiness:2,agility:1,expression:2}),option('오래 봐도 질리지 않는 모습',{expression:3,comfort:1}),option('어디든 갈 수 있을 것 같은 모습',{versatility:2,touring:2})]},
   {c:'기대하는 경험',t:'모처럼 일정이 길게 비었습니다. 무엇을 하고 싶나요?',h:'당일치기부터 며칠의 여행까지 자유롭게 떠올려 보세요.',a:[option('도시 안에서 느긋하게 시간을 보낸다',{city:2,comfort:2}),option('목적지를 여러 개 정해 장거리 여행을 간다',{touring:3,comfort:2}),option('새로운 도로를 익히고 조작 실력을 다듬는다',{agility:3,sportiness:2}),option('지도에서 본 적 없는 작은 길을 찾아본다',{versatility:3,touring:1})]},
-  {c:'함께하는 방식',t:'처음 가는 장소에 가는 방법은?',h:'혼자와 함께 중 어느 쪽이 편한지 생각해 보세요.',a:[option('혼자 계획하고 혼자 출발한다',{touring:1,practicality:1},2),option('친한 친구 한 명과 함께 간다',{comfort:1,touring:1},-1),option('친구들과 일정을 맞춰 함께 간다',{touring:2,versatility:1},-2),option('상황에 따라 유연하게 결정한다',{city:1,versatility:1},0)]},
-  {c:'실제 조건',t:'무엇이 불편하면 가장 먼저 바꾸고 싶나요?',h:'가장 신경 쓰일 것 같은 한 가지를 고르세요.',a:[option('주차와 일상 관리가 번거로운 것',{city:2,practicality:3}),option('무거운 차체가 다루기 힘든 것',{agility:3,practicality:1}),option('바람과 피로 때문에 오래 타기 힘든 것',{comfort:3,touring:2}),option('다양한 도로 환경에 제약이 많은 것',{versatility:3})]},
-  {c:'마음에 남는 순간',t:'친구에게 라이딩 이야기를 한다면?',h:'가장 먼저 꺼내고 싶은 이야기를 고르세요.',a:[option('예상보다 편리했던 일상 경험',{city:2,practicality:2},-1),option('오래 달려 만난 풍경',{touring:3,comfort:1},1),option('차체와 움직임이 잘 맞아떨어진 순간',{agility:2,sportiness:3},1),option('남들이 잘 모르는 길을 발견한 이야기',{versatility:3,expression:1},1)]},
-  {c:'나에게 필요한 것',t:'소유 만족도를 가장 높일 요소는?',h:'구매 후에 더 오래 중요할 것 같은 항목.',a:[option('낮은 유지 부담과 편의 기능',{practicality:3,city:2}),option('오래 달릴 때의 안락함',{touring:2,comfort:3}),option('기민한 움직임과 조작 반응',{agility:3,sportiness:2}),option('취향에 꼭 맞는 디자인과 감성',{expression:3})]},
+  {c:'함께하는 방식',t:'처음 가는 장소에는 누구와 함께 가고 싶나요?',h:'혼자와 함께 중 어느 쪽이 편한지 생각해 보세요.',a:[option('혼자 계획하고 혼자 출발한다',{touring:1,practicality:1},2),option('친한 친구 한 명과 함께 간다',{comfort:1,touring:1},-1),option('친구들과 일정을 맞춰 함께 간다',{touring:2,versatility:1},-2),option('상황에 따라 유연하게 결정한다',{city:1,versatility:1},0)]},
+  {c:'실제 조건',t:'다음 중 가장 불편하게 느껴질 것은?',h:'가장 신경 쓰일 것 같은 한 가지를 고르세요.',a:[option('주차와 일상 관리가 번거로운 것',{city:2,practicality:3}),option('무거운 차체가 다루기 힘든 것',{agility:3,practicality:1}),option('바람과 피로 때문에 오래 타기 힘든 것',{comfort:3,touring:2}),option('갈 수 있는 길의 종류가 적은 것',{versatility:3})]},
+  {c:'마음에 남는 순간',t:'라이딩을 마치고 친구에게 가장 말하고 싶은 것은?',h:'가장 먼저 꺼내고 싶은 이야기를 고르세요.',a:[option('예상보다 편리했던 일상 경험',{city:2,practicality:2},-1),option('오래 달려 만난 풍경',{touring:3,comfort:1},1),option('원하는 대로 바이크를 부드럽게 조작한 순간',{agility:2,sportiness:3},1),option('남들이 잘 모르는 길을 발견한 이야기',{versatility:3,expression:1},1)]},
+  {c:'나에게 필요한 것',t:'바이크를 오래 만족하며 타려면 무엇이 중요할까요?',h:'구매 후에 더 오래 중요할 것 같은 항목.',a:[option('낮은 유지 부담과 편의 기능',{practicality:3,city:2}),option('오래 달릴 때의 안락함',{touring:2,comfort:3}),option('가볍게 움직이고 바로 반응하는 느낌',{agility:3,sportiness:2}),option('취향에 꼭 맞는 디자인과 감성',{expression:3})]},
   {c:'도로 위의 하루',t:'같은 거리를 달리더라도 어떤 선택을 할까요?',h:'실제 도로 상황과 교통법규를 준수한다는 전제예요.',a:[option('편하고 효율적인 경로',{city:2,practicality:3}),option('휴식 지점이 충분한 경로',{comfort:3,touring:1}),option('포장 상태가 좋고 구성이 흥미로운 경로',{agility:2,sportiness:2}),option('새로운 풍경을 볼 수 있는 경로',{versatility:3,touring:1})]},
   {c:'함께하는 방식',t:'낯선 라이더와 마주친다면?',h:'실제로 어떻게 행동할 것 같은지 떠올려 보세요.',a:[option('내 일정대로 계속 움직인다',{practicality:1,city:1},2),option('짧게 인사만 나눈다',{city:1,expression:1},1),option('가볍게 이야기를 나눠본다',{expression:1,touring:1},-1),option('함께 갈 만한 코스를 공유한다',{versatility:1,touring:2},-2)]},
-  {c:'가장 큰 매력',t:'모터사이클을 떠올리면 무엇이 먼저 생각나나요?',h:'이미지가 아니라 자신이 원하는 경험을 선택해 보세요.',a:[option('생활 속 이동의 자유',{city:3,practicality:2}),option('먼 거리를 여행하는 감각',{touring:3,comfort:1}),option('섬세한 조작과 집중',{agility:3,sportiness:3}),option('나만의 취향과 개성을 드러내는 물건',{expression:3,versatility:1})]},
+  {c:'가장 큰 매력',t:'모터사이클을 떠올리면 무엇이 먼저 생각나나요?',h:'이미지가 아니라 가장 끌리는 경험을 선택해 보세요.',a:[option('생활 속 이동의 자유',{city:3,practicality:2}),option('먼 거리를 여행하는 감각',{touring:3,comfort:1}),option('섬세한 조작과 집중',{agility:3,sportiness:3}),option('나만의 취향과 개성을 드러내는 물건',{expression:3,versatility:1})]},
   {c:'마지막 선택',t:'한 가지를 가장 중요하게 생각한다면?',h:'테스트를 마무리하는 마지막 질문이에요.',a:[option('소유하고 타기 쉬운 균형',{city:2,practicality:3}),option('길게 달려도 편안한 경험',{comfort:3,touring:2}),option('섬세하고 즐거운 조작감',{agility:3,sportiness:2}),option('새로움과 나만의 개성',{versatility:2,expression:2})]}
 ];
 const GENRES=[
@@ -79,31 +79,34 @@ const MBTI_QUESTIONS=[
 ];
 /* v1.3.0 — Shared 16-item core; deep adds 24 items. MBTI-like questions are separate. */
 const CORE=QUESTIONS.slice(0,16);
+/* v1.5: 24 five-level agreement items (3 per preference dimension). Core 16 is unchanged. */
+const SCALE_LABELS=['매우 그렇다','그렇다','보통이다','그렇지 않다','전혀 그렇지 않다'];
+const UNKNOWN_ANSWER=-1; // Not a neutral answer: this item is excluded from the scale average.
 const DEEP=[
- {c:'주행 경험',t:'오랜 시간 바이크를 탄 날, 가장 만족스러운 것은?',h:'경험이 없다면 장시간 이동을 상상해 주세요.',a:[option('피로가 적어 다음 날에도 부담이 없는 것',{comfort:3,touring:2}),option('다양한 장소를 둘러볼 수 있었던 것',{versatility:3,touring:2}),option('차체를 다루는 재미가 오래 남은 것',{agility:3,sportiness:2}),option('비용과 시간을 효율적으로 쓴 것',{practicality:3,city:2})]},
- {c:'바이크의 성격',t:'기계적인 특성 중 가장 마음이 가는 것은?',h:'성능 수치가 아닌 느낌을 기준으로 고르세요.',a:[option('가벼운 핸들링과 즉각적인 조작',{agility:3,sportiness:1}),option('안정적이고 편안한 움직임',{comfort:3,touring:1}),option('어느 길에서도 대응하는 범용성',{versatility:3}),option('단순하고 편리한 관리',{practicality:3,city:1})]},
- {c:'선택의 타협',t:'바이크 한 대로 모든 것을 해야 한다면?',h:'단 하나만 보장받는다고 생각해 보세요.',a:[option('출퇴근에서 가장 편한 구성',{city:3,practicality:2}),option('멀리 갈 때 가장 편한 구성',{touring:3,comfort:2}),option('주말에 가장 몰입되는 조작감',{agility:2,sportiness:3}),option('도로 환경이 달라도 쓸 수 있는 구성',{versatility:3,practicality:1})]},
- {c:'소유 후 일상',t:'바이크를 세워두는 시간이 길어진다면 무엇이 아쉬울까요?',h:'실제로 가장 하고 싶었던 것을 떠올려 주세요.',a:[option('짧은 이동에도 자주 타지 못하는 것',{city:3,practicality:2}),option('장거리 계획을 떠나지 못하는 것',{touring:3}),option('차체의 움직임을 즐기지 못하는 것',{agility:3,sportiness:2}),option('취향이 드러나는 물건을 가까이 두지 못하는 것',{expression:3})]},
- {c:'탑승 환경',t:'예상보다 바람이 강한 날, 더 신경 쓰이는 것은?',h:'안전이 확보된 정상적인 주행 조건을 가정합니다.',a:[option('노출과 피로가 커지는 것',{comfort:3,touring:2}),option('작은 차체 움직임에 예민해지는 것',{agility:2,sportiness:2}),option('다른 이동수단으로 바꿔야 할 수도 있는 것',{practicality:3,city:2}),option('계획한 경로를 바꿔야 하는 것',{touring:2,versatility:2})]},
- {c:'주말 일정',t:'당일 라이딩 코스가 마음에 들지 않는다면?',h:'교통법규를 준수할 수 있는 선택지만 생각해 주세요.',a:[option('길고 편안한 경로를 다시 찾는다',{touring:3,comfort:2}),option('조작이 재미있는 포장길을 찾는다',{agility:3,sportiness:2}),option('색다른 경로와 풍경을 찾는다',{versatility:3}),option('시간을 아끼고 가까운 곳을 찾는다',{city:3,practicality:2})]},
- {c:'감성의 기준',t:'오래도록 갖고 싶은 바이크의 조건은?',h:'유행이 바뀌어도 남을 가치를 생각해 보세요.',a:[option('유지하기 쉽고 쓰임이 많은 것',{practicality:3,city:1}),option('보면 볼수록 좋은 외형',{expression:3}),option('오래 타도 편안한 구성',{comfort:3,touring:1}),option('움직일 때 살아나는 조작감',{agility:2,sportiness:3})]},
- {c:'휴식의 방식',t:'라이딩 중 쉬는 시간이 생기면 가장 하고 싶은 일은?',h:'정답은 없어요. 평소 마음에 드는 휴식에 가까운 것.',a:[option('조용히 풍경을 바라본다',{touring:2,comfort:2},1),option('다음에 가볼 길을 살펴본다',{versatility:3,touring:1}),option('차체와 장비를 살펴본다',{sportiness:2,agility:2}),option('근처에서 볼일을 마친다',{city:2,practicality:3})]},
- {c:'실제 쓰임',t:'주중에도 바이크를 자주 탈 예정이라면?',h:'어떤 조건이 가장 오래 도움이 될까요?',a:[option('주차와 이동이 편한 구성',{city:3,practicality:3}),option('피로를 줄이는 안정적인 자세',{comfort:3}),option('계속 타고 싶어지는 조작감',{agility:3,sportiness:1}),option('내가 좋아하는 외형을 매일 볼 수 있는 것',{expression:3})]},
- {c:'동승과 짐',t:'예상보다 짐이 많아질 때 무엇을 선택하나요?',h:'구매 전 고민이라고 가정하세요.',a:[option('적재가 쉬운 구조를 우선한다',{touring:2,practicality:3}),option('짐이 적어야 더 즐겁다',{agility:3,sportiness:2}),option('어떤 환경에서도 활용도를 확보한다',{versatility:3}),option('짐보다는 외관과 개성을 유지한다',{expression:3})]},
- {c:'실용적인 타협',t:'다음 중 가장 받아들이기 어려운 것은?',h:'마음에 드는 바이크라도 완벽하지는 않아요.',a:[option('매일 이동하기 번거롭다',{city:3,practicality:2}),option('장거리에서 피로가 심하다',{comfort:3,touring:2}),option('차체 반응이 둔하게 느껴진다',{agility:3,sportiness:1}),option('외형에 오래 애착이 가지 않는다',{expression:3})]},
- {c:'길의 조건',t:'탐험하고 싶은 길의 모습은?',h:'실제로 주행이 허용되는 길만 가정해 주세요.',a:[option('새로운 도시의 골목과 도로',{city:3,versatility:1}),option('여러 지역을 잇는 긴 포장도로',{touring:3,comfort:1}),option('굴곡과 코너가 이어지는 포장도로',{agility:3,sportiness:2}),option('포장 상태가 변화하는 합법적인 탐방로',{versatility:3})]},
- {c:'가치 비교',t:'같은 예산에서 한 가지를 더 얻을 수 있다면?',h:'모든 조건이 충분히 안전하다는 전제입니다.',a:[option('유지 부담을 줄이는 기능',{practicality:3,city:2}),option('편안함을 높이는 장비',{comfort:3,touring:2}),option('차체 조작감을 개선하는 요소',{agility:3,sportiness:2}),option('취향에 더 맞는 디자인',{expression:3})]},
- {c:'여행의 방식',t:'처음으로 2박 3일 라이딩을 떠난다면?',h:'현재 경험이 없어도 떠올려 보세요.',a:[option('최소한의 짐으로 가볍게 움직인다',{agility:2,practicality:2}),option('충분히 준비해 편하게 달린다',{touring:3,comfort:3}),option('목적지보다 다양한 길을 선택한다',{versatility:3,touring:1}),option('사진과 풍경이 잘 어울리는 코스를 찾는다',{expression:2,touring:2})]},
- {c:'조작감의 의미',t:'코너가 이어지는 구간에서 선호하는 느낌은?',h:'안전한 속도와 합법적인 도로 주행을 전제로 합니다.',a:[option('부드럽고 안정적인 반응',{comfort:3,agility:1}),option('가볍고 빠르게 반응하는 차체',{agility:3,sportiness:3}),option('노면이 달라도 무리 없는 대응',{versatility:3}),option('차분한 페이스로 풍경까지 즐기는 느낌',{touring:2,comfort:2})]},
- {c:'장기 보유',t:'몇 년 뒤에도 만족하려면 가장 중요한 것은?',h:'처음의 설렘이 잦아든 다음을 생각하세요.',a:[option('지속 가능한 유지·관리',{practicality:3}),option('오래 보아도 좋아할 디자인',{expression:3}),option('꾸준히 즐길 수 있는 조작감',{agility:2,sportiness:3}),option('여행에서의 편안함',{touring:2,comfort:3})]},
- {c:'상황 선택',t:'잠깐 시간이 생겼을 때 어디로 나갈까요?',h:'특별한 계획이 없다는 전제예요.',a:[option('집 근처의 익숙한 길',{city:3,practicality:2}),option('가까운 전망 좋은 장소',{touring:2,comfort:2}),option('주행감이 좋은 포장도로',{agility:2,sportiness:3}),option('가본 적 없는 다른 길',{versatility:3})]},
- {c:'환경 변화',t:'도로 환경이 예상과 달라졌다면?',h:'위험을 피하고 안전하게 우회하는 상황입니다.',a:[option('편하고 검증된 경로를 선택한다',{comfort:2,practicality:3}),option('여행 전체의 흐름을 유지한다',{touring:3}),option('합법적인 새로운 경로를 찾아본다',{versatility:3}),option('운동성이 좋은 포장길을 다시 고른다',{agility:2,sportiness:3})]},
- {c:'주행 목적',t:'가장 마음에 드는 일주일의 바이크 사용 패턴은?',h:'실제 일상과 상상 속 이상을 함께 고려하세요.',a:[option('평일에 자주 짧게 타기',{city:3,practicality:3}),option('주말마다 멀리 떠나기',{touring:3,comfort:2}),option('짧아도 집중해서 즐기기',{agility:3,sportiness:2}),option('그때그때 다른 경로 시도하기',{versatility:3,expression:1})]},
- {c:'포기할 조건',t:'둘 중 꼭 하나를 양보해야 한다면?',h:'더 중요하게 지키고 싶은 것을 골라 주세요.',a:[option('편안함보다 조작감을 지킨다',{agility:3,sportiness:2}),option('조작감보다 편안함을 지킨다',{comfort:3,touring:2}),option('어느 쪽보다 관리 편의성을 지킨다',{practicality:3,city:2}),option('어느 쪽보다 디자인을 지킨다',{expression:3})]},
- {c:'디자인과 성능',t:'외관과 주행 성격이 엇갈리면?',h:'내가 후회하지 않을 선택을 떠올려 보세요.',a:[option('주행 특성이 맞으면 외관은 타협한다',{sportiness:2,agility:2}),option('외관이 좋으면 일부 특성은 타협한다',{expression:3}),option('생활 속 편리함을 최우선으로 둔다',{practicality:3,city:2}),option('오래 타는 편안함을 우선한다',{comfort:3,touring:2})]},
- {c:'기술과 감성',t:'새로운 모델을 볼 때 가장 먼저 찾아볼 정보는?',h:'관심이 가는 항목 하나만 고르세요.',a:[option('연비·정비·실용 기능',{practicality:3,city:2}),option('시트와 방풍 등 편의 요소',{comfort:3,touring:2}),option('차체 무게·핸들링 특성',{agility:3,sportiness:2}),option('디자인·소재·시각적 특징',{expression:3})]},
- {c:'한 번의 선택',t:'좋아하는 모델이 모두 같은 가격이라면?',h:'오직 소유 경험을 기준으로 판단해 주세요.',a:[option('생활에 가장 자주 쓰일 바이크',{city:3,practicality:3}),option('먼 곳까지 편하게 갈 바이크',{touring:3,comfort:2}),option('짧게 타도 몰입되는 바이크',{sportiness:3,agility:3}),option('다양한 길에 도전할 수 있는 바이크',{versatility:3,expression:1})]},
- {c:'최종 우선순위',t:'바이크를 통해 가장 오래 얻고 싶은 가치는?',h:'이제 마지막 질문이에요.',a:[option('언제든 편하게 이동할 자유',{city:2,practicality:3}),option('먼 길과 여행의 경험',{touring:3,comfort:2}),option('차체를 다루는 즐거움',{agility:3,sportiness:3}),option('낯선 길과 나다운 경험',{versatility:3,expression:2})]}
+  {kind:'scale',axis:'city',c:'취향',t:'바이크를 일상에서도 자주 타고 싶다.',h:'평소 내 모습과 가장 가까운 정도를 선택해 주세요.',reverse:false,needsExperience:false},
+  {kind:'scale',axis:'touring',c:'취향',t:'짧은 외출보다 멀리 떠나는 바이크 여행에 더 끌린다.',h:'평소 내 모습과 가장 가까운 정도를 선택해 주세요.',reverse:false,needsExperience:false},
+  {kind:'scale',axis:'agility',c:'취향',t:'바이크가 가볍게 움직이는 느낌이 좋다.',h:'평소 내 모습과 가장 가까운 정도를 선택해 주세요.',reverse:false,needsExperience:false},
+  {kind:'scale',axis:'comfort',c:'취향',t:'오래 타도 편안한 자세가 중요하다.',h:'평소 내 모습과 가장 가까운 정도를 선택해 주세요.',reverse:false,needsExperience:false},
+  {kind:'scale',axis:'versatility',c:'취향',t:'가본 적 없는 길을 찾아가는 일이 즐겁다.',h:'평소 내 모습과 가장 가까운 정도를 선택해 주세요.',reverse:false,needsExperience:false},
+  {kind:'scale',axis:'expression',c:'취향',t:'바이크를 고를 때 디자인을 중요하게 본다.',h:'평소 내 모습과 가장 가까운 정도를 선택해 주세요.',reverse:false,needsExperience:false},
+  {kind:'scale',axis:'practicality',c:'취향',t:'유지비가 적게 드는 바이크에 더 끌린다.',h:'평소 내 모습과 가장 가까운 정도를 선택해 주세요.',reverse:false,needsExperience:false},
+  {kind:'scale',axis:'sportiness',c:'취향',t:'바이크를 조작하는 재미가 가장 큰 매력 중 하나다.',h:'평소 내 모습과 가장 가까운 정도를 선택해 주세요.',reverse:false,needsExperience:false},
+  {kind:'scale',axis:'city',c:'사용 방식',t:'가까운 거리를 이동할 때도 바이크를 선택하고 싶다.',h:'옳고 그른 답은 없어요. 나에게 가까운 답을 골라 주세요.',reverse:false,needsExperience:false},
+  {kind:'scale',axis:'touring',c:'사용 방식',t:'시간이 허락한다면 하루 이상 이어지는 라이딩 여행을 가고 싶다.',h:'옳고 그른 답은 없어요. 나에게 가까운 답을 골라 주세요.',reverse:false,needsExperience:false},
+  {kind:'scale',axis:'agility',c:'사용 방식',t:'내가 움직인 만큼 바이크가 바로 반응하는 것이 중요하다.',h:'실제 바이크 경험이 없다면 판단하기 어렵다고 선택해도 좋아요.',reverse:false,needsExperience:true},
+  {kind:'scale',axis:'comfort',c:'사용 방식',t:'바람이나 피로를 덜어 주는 편의 기능이 중요하다.',h:'옳고 그른 답은 없어요. 나에게 가까운 답을 골라 주세요.',reverse:false,needsExperience:false},
+  {kind:'scale',axis:'versatility',c:'사용 방식',t:'다양한 도로 환경에 맞는 바이크를 갖고 싶다.',h:'옳고 그른 답은 없어요. 나에게 가까운 답을 골라 주세요.',reverse:false,needsExperience:false},
+  {kind:'scale',axis:'expression',c:'사용 방식',t:'바이크의 외형이 마음에 들면 더 오래 애착이 간다.',h:'옳고 그른 답은 없어요. 나에게 가까운 답을 골라 주세요.',reverse:false,needsExperience:false},
+  {kind:'scale',axis:'practicality',c:'사용 방식',t:'주차하거나 관리하기 쉬운 바이크가 좋다.',h:'옳고 그른 답은 없어요. 나에게 가까운 답을 골라 주세요.',reverse:false,needsExperience:false},
+  {kind:'scale',axis:'sportiness',c:'사용 방식',t:'굽은 포장도로에서 바이크를 부드럽게 다루는 것이 즐겁다.',h:'실제 바이크 경험이 없다면 판단하기 어렵다고 선택해도 좋아요.',reverse:false,needsExperience:true},
+  {kind:'scale',axis:'city',c:'우선순위',t:'바이크는 주말에만 타더라도 충분히 만족할 것 같다.',h:'옳고 그른 답은 없어요. 나에게 가까운 답을 골라 주세요.',reverse:true,needsExperience:false},
+  {kind:'scale',axis:'touring',c:'우선순위',t:'나는 먼 거리보다 짧은 거리만 다녀오는 편이 좋다.',h:'옳고 그른 답은 없어요. 나에게 가까운 답을 골라 주세요.',reverse:true,needsExperience:false},
+  {kind:'scale',axis:'agility',c:'우선순위',t:'민첩한 움직임보다 묵직하고 차분한 느낌이 더 좋다.',h:'옳고 그른 답은 없어요. 나에게 가까운 답을 골라 주세요.',reverse:true,needsExperience:false},
+  {kind:'scale',axis:'comfort',c:'우선순위',t:'마음에 드는 바이크라면 편안함은 많이 양보해도 괜찮다.',h:'옳고 그른 답은 없어요. 나에게 가까운 답을 골라 주세요.',reverse:true,needsExperience:false},
+  {kind:'scale',axis:'versatility',c:'우선순위',t:'나는 늘 다니는 익숙한 도로만 있어도 충분하다.',h:'옳고 그른 답은 없어요. 나에게 가까운 답을 골라 주세요.',reverse:true,needsExperience:false},
+  {kind:'scale',axis:'expression',c:'우선순위',t:'사용하기 편하다면 바이크의 외형은 별로 중요하지 않다.',h:'옳고 그른 답은 없어요. 나에게 가까운 답을 골라 주세요.',reverse:true,needsExperience:false},
+  {kind:'scale',axis:'practicality',c:'우선순위',t:'내 취향에 맞는다면 유지·관리의 번거로움은 크게 신경 쓰지 않는다.',h:'옳고 그른 답은 없어요. 나에게 가까운 답을 골라 주세요.',reverse:true,needsExperience:false},
+  {kind:'scale',axis:'sportiness',c:'우선순위',t:'스포티한 느낌보다 여유로운 이동이 더 끌린다.',h:'옳고 그른 답은 없어요. 나에게 가까운 답을 골라 주세요.',reverse:true,needsExperience:false}
 ];
 const DEEP_MBTI_EXTRA=[
  {a:'EI',t:'새로운 사람을 만나면 대화 속에서 생각이 더 잘 정리된다.',r:false},
@@ -122,34 +125,154 @@ const DEEP_MBTI_EXTRA=[
 // Same first 8 items for both modes, so an upgrade only asks unanswered items.
 const PERSONALITY_ITEMS=[...MBTI_QUESTIONS.slice(0,8),...MBTI_QUESTIONS.slice(8),...DEEP_MBTI_EXTRA.slice(0,8)];
 const MODE_CONFIG={quick:{label:'빠른 유형 찾기',length:16,mbti:8},deep:{label:'진지한 유형 찾기',length:40,mbti:20}};
-const STORE='ridedna-v1.3.0';
-function blankState(){return {screen:'home',mode:null,answers:Array(40).fill(null),index:0,adaptive:[],adaptAnswers:[],adaptIndex:0,completed:false,personality:Array(20).fill(null),personalityIndex:0,estimated:null,estimateLength:0,mbtiManual:null,manualDraft:[null,null,null,null],shared:false,sharedData:null,experience:'unspecified'};}
+const STORE='ridedna-v1.5.0'; // New model: never interpret previous deep multiple-choice answers as scale answers.
+const LEGACY_STORE='ridedna-v1.3.0'; // Read-only migration of 16-item quick tests only.
+const DUO_SESSION='ridedna-duo-invite-v1';
+let duoInvite=null, savedOwn=null, cardFile=null, imageVersion=0;
+function blankState(){return {modelVersion:5,screen:'home',mode:null,answers:Array(40).fill(null),index:0,adaptive:[],adaptAnswers:[],adaptIndex:0,completed:false,personality:Array(20).fill(null),personalityIndex:0,estimated:null,estimateLength:0,mbtiManual:null,manualDraft:[null,null,null,null],shared:false,sharedData:null,experience:'unspecified'};}
 let state=blankState();
 const $=id=>document.getElementById(id);
-const screens=Object.fromEntries(['home','choose','quiz','result','mbti','manual'].map(x=>[x,$(x+'-screen')]));
+const screens=Object.fromEntries(['home','choose','quiz','result','mbti','manual','duo'].map(x=>[x,$(x+'-screen')]));
 let locked=false, timer=null, toastTimer=null;
+/* v1.6.0 — Motion is presentation only. No model/scoring values are modified. */
+const MOTION_KEY='ride-dna-motion-v1';
+let motionMode='standard', revealTimer=null, questionFrame=0, revealActive=false;
+function readMotionMode(){
+ try{const stored=localStorage.getItem(MOTION_KEY);if(['standard','full','off'].includes(stored))return stored;}catch{}
+ return window.matchMedia?.('(prefers-reduced-motion: reduce)').matches?'off':'standard';
+}
+function setMotionMode(mode,{save=true}={}){
+ if(!['standard','full','off'].includes(mode))return;
+ motionMode=mode;document.documentElement.dataset.motion=mode;
+ if(save)try{localStorage.setItem(MOTION_KEY,mode);}catch{}
+ document.querySelectorAll('input[name="motion-mode"]').forEach(input=>{input.checked=input.value===mode;});
+ const note=$('motion-note');if(note)note.textContent=mode==='off'?'불필요한 전환과 결과 공개 연출을 건너뜁니다.':mode==='full'?'조금 더 강한 화면 효과를 적용합니다.':'빠른 질문 전환과 짧은 결과 공개 연출을 사용합니다.';
+ if(mode==='off')dismissReveal({focus:false});
+}
+function openMotionSettings(){setMotionMode(motionMode,{save:false});$('motion-dialog').showModal();}
+function motionEnabled(){return motionMode!=='off';}
+function questionEnter(){
+ const body=document.querySelector('#quiz-screen .quiz-body');if(!body)return;
+ body.classList.remove('question-leaving','question-entering');
+ if(!motionEnabled())return;
+ const frame=++questionFrame;
+ requestAnimationFrame(()=>{if(state.screen==='quiz'&&frame===questionFrame)body.classList.add('question-entering');});
+}
+function updateProgressMotion(el){
+ el.classList.remove('is-advancing');if(!motionEnabled())return;
+ void el.offsetWidth;el.classList.add('is-advancing');
+}
+const SVG_NS='http://www.w3.org/2000/svg';
+function svgElement(tag,attrs={}){const node=document.createElementNS(SVG_NS,tag);for(const [key,value] of Object.entries(attrs))node.setAttribute(key,String(value));return node;}
+function signatureValues(axes){return K.map(k=>Math.max(0,Math.min(100,Number(axes?.[k])||0)));}
+function signaturePoints(axes){
+ return signatureValues(axes).map((value,i)=>{
+  const a=-Math.PI/2+i*Math.PI/4,r=31+value*.67;
+  return [110+Math.cos(a)*r,110+Math.sin(a)*r];
+ });
+}
+function drawSignature(svg,axes){
+ if(!svg)return;svg.replaceChildren();
+ [44,76,103].forEach(r=>svg.append(svgElement('circle',{cx:110,cy:110,r,fill:'none',stroke:'rgba(209,181,190,.17)','stroke-width':1})));
+ for(let i=0;i<8;i++){
+  const a=-Math.PI/2+i*Math.PI/4;
+  svg.append(svgElement('line',{x1:110,y1:110,x2:(110+103*Math.cos(a)).toFixed(2),y2:(110+103*Math.sin(a)).toFixed(2),stroke:'rgba(209,181,190,.15)','stroke-width':1}));
+ }
+ const points=signaturePoints(axes);
+ const poly=svgElement('polygon',{points:points.map(p=>p.map(x=>x.toFixed(2)).join(',')).join(' '),fill:'rgba(210,59,75,.21)',stroke:'#ed7482','stroke-width':2.6,'stroke-linejoin':'round',class:'signature-shape'});
+ svg.append(poly);
+ points.forEach(([x,y])=>svg.append(svgElement('circle',{cx:x.toFixed(2),cy:y.toFixed(2),r:3.3,fill:'#f09da6',class:'signature-dot'})));
+ svg.append(svgElement('circle',{cx:110,cy:110,r:3,fill:'#f1c2c7'}));
+}
+function displayAxesForResult(result){
+ if(result.axes)return result.axes;
+ // Shared links contain only summary data; do not fabricate or expose precise eight-axis answers.
+ const profiles=(result.genres||[]).map(g=>GENRES.find(x=>x.id===g.id)?.profile).filter(Boolean);
+ return Object.fromEntries(K.map(k=>[k,profiles.length?profiles.reduce((n,p)=>n+p[k],0)/profiles.length:50]));
+}
+function dismissReveal({focus=true}={}){
+ if(revealTimer){clearTimeout(revealTimer);revealTimer=null;}
+ const overlay=$('reveal-overlay');if(!overlay||overlay.hidden)return;
+ overlay.hidden=true;revealActive=false;
+ $('main').inert=false;$('header').inert=false;document.querySelector('footer').inert=false;
+ if(focus&&state.screen==='result')$('result-title').focus({preventScroll:true});
+}
+function launchReveal(){
+ if(!motionEnabled())return;
+ const result=calculate(),label=TYPES[result.type]?.[0]||'나의 라이더 유형';
+ $('reveal-type').textContent=label;$('reveal-genre').textContent=result.genres[0]?.genre.name||'';
+ drawSignature($('reveal-signature-svg'),result.axes);
+ const overlay=$('reveal-overlay');overlay.hidden=false;revealActive=true;
+ $('main').inert=true;$('header').inert=true;document.querySelector('footer').inert=true;
+ $('reveal-skip').focus({preventScroll:true});
+ revealTimer=setTimeout(()=>dismissReveal(),motionMode==='full'?1750:1280);
+}
+
 function qs(){return state.mode==='deep'?[...CORE,...DEEP]:CORE;}
 function answerTotal(){return MODE_CONFIG[state.mode]?.length||16;}
 function mbtiTotal(){return MODE_CONFIG[state.mode]?.mbti||8;}
 function isUnfinished(){return Boolean(state.mode&&!state.completed&&state.answers.slice(0,answerTotal()).some(v=>v!==null));}
 function persist(){if(state.shared)return;try{localStorage.setItem(STORE,JSON.stringify({...state,screen:['manual','mbti'].includes(state.screen)?'result':state.screen,shared:false,sharedData:null}));}catch{}}
-function restore(){try{const d=JSON.parse(localStorage.getItem(STORE)||'null');if(!d||!['quick','deep',null].includes(d.mode)||!Array.isArray(d.answers)||d.answers.length!==40||!d.answers.every(v=>v===null||(Number.isInteger(v)&&v>=0&&v<4)))return;
- const x=blankState();Object.assign(x,d);x.answers=d.answers; x.shared=false;x.sharedData=null;
- if(!Array.isArray(x.personality)||x.personality.length!==20||!x.personality.every(v=>v===null||(Number.isInteger(v)&&v>=-2&&v<=2)))x.personality=Array(20).fill(null);
- if(!Array.isArray(x.adaptive))x.adaptive=[];if(!Array.isArray(x.adaptAnswers))x.adaptAnswers=[];
- x.index=Math.min(Math.max(Number.isInteger(x.index)?x.index:0,0),x.mode==='deep'?40:15);
- x.personalityIndex=Math.max(0,Math.min(19,Number.isInteger(x.personalityIndex)?x.personalityIndex:0));
- if(!screens[x.screen]||x.screen==='manual'||x.screen==='mbti')x.screen='home';
- if(x.screen==='result'&&!x.completed)x.screen='home';if(x.screen==='quiz'&&x.completed)x.screen='result';state=x;
- }catch{}}
+function quickLegacyCopy(){
+ try{
+  if(localStorage.getItem(STORE))return;
+  const raw=localStorage.getItem(LEGACY_STORE)||'';
+  if(!raw||raw.length>26000)return;
+  const d=JSON.parse(raw);
+  if(d?.mode!=='quick'||!Array.isArray(d.answers)||d.answers.length!==40||
+     !d.answers.slice(0,16).every(v=>v===null||(Number.isInteger(v)&&v>=0&&v<4)))return;
+  const x=blankState();x.mode='quick';x.answers=d.answers.slice(0,16).concat(Array(24).fill(null));
+  x.completed=d.completed===true&&x.answers.slice(0,16).every(Number.isInteger);
+  x.index=x.completed?16:Math.max(0,Math.min(15,Number.isInteger(d.index)?d.index:0));
+  x.screen=x.completed?'result':'home';
+  if(Array.isArray(d.personality)&&d.personality.length===20&&d.personality.every(v=>v===null||(Number.isInteger(v)&&v>=-2&&v<=2)))x.personality=d.personality;
+  if(allowedMBTI(d.estimated))x.estimated=d.estimated;
+  if(allowedMBTI(d.mbtiManual)&&!d.mbtiManual.includes('?'))x.mbtiManual=d.mbtiManual;
+  x.estimateLength=[8,20].includes(d.estimateLength)?d.estimateLength:0;
+  localStorage.setItem(STORE,JSON.stringify(x));
+ }catch{}
+}
+function restore(){
+ try{
+  quickLegacyCopy();
+  const stored=localStorage.getItem(STORE)||'';
+  if(!stored||stored.length>26000)return;
+  const d=JSON.parse(stored);
+  if(!d||d.modelVersion!==5||!['quick','deep',null].includes(d.mode)||!Array.isArray(d.answers)||d.answers.length!==40||
+    !d.answers.every((v,i)=>v===null||(Number.isInteger(v)&& (i<16?v>=0&&v<4:v>=UNKNOWN_ANSWER&&v<=4))))return;
+  const x=blankState();
+  for(const key of ['screen','mode','index','adaptive','adaptAnswers','adaptIndex','completed','personality','personalityIndex','estimated','estimateLength','mbtiManual','manualDraft','experience']){
+   if(Object.prototype.hasOwnProperty.call(d,key))x[key]=d[key];
+  }
+  x.answers=d.answers; x.shared=false;x.sharedData=null;
+  if(!Array.isArray(x.personality)||x.personality.length!==20||!x.personality.every(v=>v===null||(Number.isInteger(v)&&v>=-2&&v<=2)))x.personality=Array(20).fill(null);
+  if(!Array.isArray(x.adaptive))x.adaptive=[];
+  x.adaptive=x.adaptive.slice(0,8).filter(q=>q&&K.includes(q.axis)).map(q=>({axis:q.axis,options:ADAPTIVE_AXES[q.axis]}));
+  if(!Array.isArray(x.adaptAnswers))x.adaptAnswers=[];
+  x.adaptAnswers=x.adaptAnswers.slice(0,x.adaptive.length).map(v=>[0,1,2].includes(v)?v:null);
+  x.adaptIndex=Math.max(0,Math.min(x.adaptive.length?x.adaptive.length-1:0,Number.isInteger(x.adaptIndex)?x.adaptIndex:0));
+  x.completed=x.completed===true;
+  x.estimated=allowedMBTI(x.estimated)?x.estimated:null;
+  x.mbtiManual=allowedMBTI(x.mbtiManual)&&!x.mbtiManual.includes('?')?x.mbtiManual:null;
+  x.estimateLength=[8,20].includes(x.estimateLength)?x.estimateLength:0;
+  if(!Array.isArray(x.manualDraft)||x.manualDraft.length!==4||!x.manualDraft.every((v,i)=>v===null||(['EI','SN','TF','JP'][i]||'').includes(v)))x.manualDraft=[null,null,null,null];
+  x.index=Math.min(Math.max(Number.isInteger(x.index)?x.index:0,0),x.mode==='deep'?40:16);
+  x.personalityIndex=Math.max(0,Math.min(19,Number.isInteger(x.personalityIndex)?x.personalityIndex:0));
+  if(!screens[x.screen]||['manual','mbti','duo'].includes(x.screen))x.screen='home';
+  if(x.screen==='result'&&!x.completed)x.screen='home';
+  if(x.screen==='quiz'&&x.completed)x.screen='result';
+  state=x;
+ }catch{}
+}
 function answerTotalFor(mode){return MODE_CONFIG[mode]?.length||16;}
 function toast(message){const el=$('toast');el.textContent=message;el.hidden=false;clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.hidden=true,3200);}
 function urlState(){return {rideDna:true,screen:state.screen,mode:state.mode,index:state.index,adaptIndex:state.adaptIndex,personalityIndex:state.personalityIndex};}
 function show(name,{nav='push',focus=true}={}){
- if(!screens[name])name='home';clearTimeout(timer);locked=false;state.screen=name;
+ if(!screens[name])name='home';dismissReveal({focus:false});clearTimeout(timer);locked=false;state.screen=name;
  document.body.dataset.view=name;for(const [key,s] of Object.entries(screens))s.hidden=key!==name;
  $('hero-reset').hidden=!isUnfinished();$('hero-cta-label').textContent='내 라이더 유형 찾기';
- if(name==='choose')renderChoose();if(name==='quiz')renderQuiz();if(name==='result')renderResult();if(name==='mbti')renderMbti();if(name==='manual')renderManual();
+ if(name==='choose')renderChoose();if(name==='quiz'){renderQuiz();questionEnter();}if(name==='result')renderResult();if(name==='mbti')renderMbti();if(name==='manual')renderManual();if(name==='duo')renderDuo();
+ if(motionEnabled()&&name!=='quiz'){const screen=screens[name];screen.classList.remove('motion-scene-enter');requestAnimationFrame(()=>{if(state.screen===name)screen.classList.add('motion-scene-enter');});}
  window.scrollTo({top:0,behavior:'instant'});persist();
  if(nav!=='silent'){const route=urlState();if(nav==='replace')history.replaceState(route,'');else if(!history.state?.rideDna||Object.entries(route).some(([k,v])=>history.state?.[k]!==v))history.pushState(route,'');}
  if(focus){let target=screens[name].querySelector('[data-autofocus]');if(target)requestAnimationFrame(()=>target.focus({preventScroll:true}));}
@@ -162,24 +285,42 @@ function chooseMode(mode){if(isUnfinished()&&state.mode===mode){show('quiz');ret
 function upgrade(){if(state.shared)return;const old=state.answers.slice(0,16);const manual=state.mbtiManual;const personality=state.personality.slice();const estimate=state.estimated;const estimateLength=state.estimateLength;
  state=blankState();state.mode='deep';state.index=16;state.answers.splice(0,16,...old);state.personality=personality;state.estimated=estimate;state.estimateLength=estimateLength;state.mbtiManual=manual;show('quiz');}
 function quit(){if($('exit-dialog').showModal)$('exit-dialog').showModal();else if(confirm('나가도 답변은 이 기기에 보관됩니다. 나갈까요?'))show('home');}
+function currentQuizQuestion(){return state.mode==='deep'&&state.index>=40?state.adaptive[state.adaptIndex]:qs()[state.index];}
 function renderQuiz(){
- const deep=state.mode==='deep',extra=deep&&state.index>=40,q=extra?state.adaptive[state.adaptIndex]:qs()[state.index];
+ const deep=state.mode==='deep',extra=deep&&state.index>=40,q=currentQuizQuestion();
  if(!q){finish();return;}
+ const scale=!extra&&q.kind==='scale';
  const total=answerTotal(),step=extra?40+state.adaptIndex+1:state.index+1,max=extra?40+state.adaptive.length:total;
- const chapter=deep&&!extra?` · ${Math.floor(state.index/10)+1}/4 구간`:'';
+ const chapter=deep&&!extra&&state.index>=16?` · 심화 ${Math.floor((state.index-16)/8)+1}/3`:(deep?' · 공통 질문':'');
  $('quiz-stage').textContent=(extra?'추가 취향 확인':MODE_CONFIG[state.mode].label)+chapter;
  $('quiz-progress-label').textContent=String(step).padStart(2,'0')+' / '+max;
+ updateProgressMotion($('quiz-progress'));
  const pct=Math.round((step-1)/Math.max(1,max)*100);$('quiz-progress-fill').style.width=pct+'%';$('quiz-progress').setAttribute('aria-valuenow',String(pct));
- $('question-category').textContent=extra?'두 취향이 비슷하게 나타나요':q.c;
+ $('question-category').textContent=extra?'두 취향이 비슷하게 나타나요':scale?'취향의 강도 · '+q.c:q.c;
  $('question-title').textContent=extra?'둘 중 어느 쪽이 조금 더 중요한가요?':q.t;
  $('question-hint').textContent=extra?'어느 쪽도 아니라면 비슷하다고 선택해 주세요.':q.h;
- const labels=extra?[q.options[0],q.options[1],'둘 다 비슷하다']:q.a.map(x=>x.label),selected=extra?state.adaptAnswers[state.adaptIndex]:state.answers[state.index];
- const wrap=$('answers');wrap.replaceChildren();labels.forEach((label,i)=>{const b=document.createElement('button');b.type='button';b.className='answer';b.textContent=label;b.classList.toggle('chosen',i===selected);b.setAttribute('aria-pressed',String(i===selected));b.addEventListener('click',()=>choose(i));wrap.append(b);});
+ const labels=extra?[q.options[0],q.options[1],'둘 다 비슷하다']:scale?[...SCALE_LABELS,...(q.needsExperience?['아직 경험이 없어 판단하기 어려워요']:[])]:q.a.map(x=>x.label);
+ const selected=extra?state.adaptAnswers[state.adaptIndex]:state.answers[state.index];
+ const wrap=$('answers');wrap.replaceChildren();wrap.classList.toggle('scale-mode',scale);
+ labels.forEach((label,i)=>{
+  const val=scale&&i===5?UNKNOWN_ANSWER:i;
+  const b=document.createElement('button');b.type='button';b.className=scale?(val===UNKNOWN_ANSWER?'answer skip-experience':'answer scale-answer'):'answer';
+  b.textContent=label;b.classList.toggle('chosen',val===selected);b.setAttribute('aria-pressed',String(val===selected));
+  b.addEventListener('click',()=>choose(val));wrap.append(b);
+ });
  $('quiz-prev').disabled=!extra&&state.index===0;
- $('quiz-helper').textContent=extra?'결과가 가까운 스타일을 조금 더 구분합니다.':'선택하면 다음 질문으로 이동합니다.';
+ $('quiz-helper').textContent=scale?'보통이다와 경험 없음은 다르게 처리합니다.':extra?'결과가 가까운 스타일을 조금 더 구분합니다.':'선택하면 다음 질문으로 이동합니다.';
 }
-function choose(i){if(locked||state.screen!=='quiz')return;const count=state.index>=40?3:qs()[state.index]?.a.length;if(!(i>=0&&i<count))return;locked=true;
- [...$('answers').children].forEach((b,n)=>{b.classList.toggle('chosen',n===i);b.setAttribute('aria-pressed',String(n===i));});timer=setTimeout(()=>commit(i),260);
+function choose(i){
+ if(locked||state.screen!=='quiz')return;
+ const q=currentQuizQuestion(),extra=state.mode==='deep'&&state.index>=40;
+ const allowed=extra?[0,1,2]:q?.kind==='scale'?(q.needsExperience?[0,1,2,3,4,UNKNOWN_ANSWER]:[0,1,2,3,4]):q?.a?.map((_,n)=>n)||[];
+ if(!allowed.includes(i))return;
+ locked=true;const selectedIndex=(q?.kind==='scale'&&i===UNKNOWN_ANSWER)?5:i;
+ [...$('answers').children].forEach((b,n)=>{b.classList.toggle('chosen',n===selectedIndex);b.setAttribute('aria-pressed',String(n===selectedIndex));});
+ const duration=motionMode==='off'?0:motionMode==='full'?270:210;
+ if(motionEnabled())document.querySelector('#quiz-screen .quiz-body')?.classList.add('question-leaving');
+ timer=setTimeout(()=>commit(i),duration);
 }
 function commit(i){const total=answerTotal();if(state.index<total){state.answers[state.index]=i;if(state.index<total-1){state.index++;show('quiz',{focus:false});return;}if(state.mode==='deep'){initAdaptive();return;}finish();return;}
  state.adaptAnswers[state.adaptIndex]=i;if(state.adaptIndex<state.adaptive.length-1){state.adaptIndex++;show('quiz',{focus:false});return;}
@@ -187,20 +328,38 @@ function commit(i){const total=answerTotal();if(state.index<total){state.answers
 function prev(){clearTimeout(timer);locked=false;if(state.index>=40){if(state.adaptIndex>0)state.adaptIndex--;else state.index=39;}else if(state.index>0)state.index--;show('quiz');}
 function initAdaptive(){const data=calculate();state.adaptive=[];state.adaptAnswers=[];state.adaptIndex=0;if(data.genres[0].score-data.genres[1].score<=7){state.adaptive=buildAdaptive(data,4);if(state.adaptive.length){state.index=40;show('quiz',{focus:false});return;}}finish();}
 function buildAdaptive(calc,count){const a=calc.genres[0].genre,b=calc.genres[1].genre;const used=new Set(state.adaptive.map(x=>x.axis));return K.map(axis=>({axis,gap:Math.abs(a.profile[axis]-b.profile[axis])})).filter(x=>x.gap>=15&&!used.has(x.axis)).sort((x,y)=>y.gap-x.gap).slice(0,count).map(x=>({axis:x.axis,options:ADAPTIVE_AXES[x.axis]}));}
-function axesFrom(){const selected=Object.fromEntries(K.map(k=>[k,0]));const capacity=Object.fromEntries(K.map(k=>[k,0]));let solo=0;
- qs().forEach((q,i)=>{const answer=state.answers[i];if(answer===null||answer===undefined||!q.a[answer])return;
- K.forEach(k=>{capacity[k]+=Math.max(0,...q.a.map(o=>o.w[k]||0));selected[k]+=q.a[answer].w[k]||0;});solo+=q.a[answer].solo||0;});
+function axesFrom(){
+ // Quick mode's 16 choices and weighting have not changed. Deep starts from the same anchor.
+ const selected=Object.fromEntries(K.map(k=>[k,0]));const capacity=Object.fromEntries(K.map(k=>[k,0]));let solo=0;
+ CORE.forEach((q,i)=>{const answer=state.answers[i];if(!Number.isInteger(answer)||!q.a[answer])return;
+  K.forEach(k=>{capacity[k]+=Math.max(0,...q.a.map(o=>o.w[k]||0));selected[k]+=q.a[answer].w[k]||0;});solo+=q.a[answer].solo||0;
+ });
  const axes=Object.fromEntries(K.map(k=>[k,Math.max(5,Math.min(100,Math.round(23+140*(selected[k]/Math.max(1,capacity[k])))))]));
+ let unrated=0;
+ if(state.mode==='deep'){
+  for(const k of K){
+   const vals=DEEP.flatMap((q,i)=>{if(q.axis!==k)return [];
+    const value=state.answers[16+i];if(!Number.isInteger(value)||value<0||value>4)return [];
+    return [q.reverse?value:4-value];
+   });
+   const missing=DEEP.filter((q,i)=>q.axis===k&&state.answers[16+i]===UNKNOWN_ANSWER).length;unrated+=missing;
+   if(vals.length){
+    const rated=vals.reduce((a,b)=>a+b,0)/vals.length*25; // 0..100, neutral=50.
+    const strength=vals.length===1?.45:.65; // At least two observations before full blend.
+    axes[k]=Math.max(0,Math.min(100,Math.round((1-strength)*axes[k]+strength*rated)));
+   }
+  }
+ }
  state.adaptive.forEach((q,i)=>{if(state.adaptAnswers[i]===0)axes[q.axis]=Math.min(100,axes[q.axis]+9);if(state.adaptAnswers[i]===1)axes[q.axis]=Math.max(0,axes[q.axis]-9);});
- return {axes,solo};
+ return {axes,solo,unrated};
 }
-function calculate(){const {axes,solo}=axesFrom();const weights={city:1.1,touring:1.1,agility:1.15,comfort:1.1,versatility:1.2,expression:.94,practicality:1.04,sportiness:1.05};
+function calculate(){const {axes,solo,unrated}=axesFrom();const weights={city:1.1,touring:1.1,agility:1.15,comfort:1.1,versatility:1.2,expression:.94,practicality:1.04,sportiness:1.05};
  const genres=GENRES.map(genre=>{let d=0,n=0;K.forEach(k=>{d+=weights[k]*(axes[k]-genre.profile[k])**2;n+=weights[k];});return {genre,score:Math.max(0,Math.round(100-Math.sqrt(d/n)))};}).sort((a,b)=>b.score-a.score||a.genre.id.localeCompare(b.genre.id));
  const mood={explore:(axes.touring+axes.versatility-axes.city-axes.practicality)/2,active:(axes.agility+axes.sportiness)/2-axes.comfort,express:axes.expression-axes.practicality,solo};
  const flags=[mood.explore>7,mood.active>7,mood.express>7,solo>=2];const type=flags.reduce((n,flag,i)=>n+(flag?8>>i:0),0);
- return {axes,genres,type,neutral:Object.entries(mood).filter(([k,v])=>Math.abs(v)<(k==='solo'?2:8)).map(([k])=>k)};
+ return {axes,genres,type,unrated,neutral:Object.entries(mood).filter(([k,v])=>Math.abs(v)<(k==='solo'?2:8)).map(([k])=>k)};
 }
-function finish(){state.index=answerTotal();state.completed=true;show('result');}
+function finish(){state.index=answerTotal();state.completed=true;show('result');launchReveal();}
 function htmlText(el,txt){el.textContent=txt;}
 function renderResult(){const share=state.shared&&state.sharedData;const result=share?share:calculate();const t=TYPES[result.type]||TYPES[0],picks=share?result.genres.map(x=>({genre:GENRES.find(g=>g.id===x.id),score:null})):result.genres;
  $('result-title').textContent=t[0];$('result-english').textContent=t[1];$('result-serial').textContent='TYPE '+String(result.type+1).padStart(2,'0')+' / 16';
@@ -208,14 +367,19 @@ function renderResult(){const share=state.shared&&state.sharedData;const result=
  $('result-mode').textContent=share?(share.mode==='deep'?'심화 결과 공유':'빠른 결과 공유'):state.mode==='deep'?'진지한 유형 찾기 결과':'빠른 유형 찾기 결과';
  $('result-deep-cta').hidden=Boolean(share)||state.mode==='deep';$('shared-note').hidden=!share;
  $('result-details').open=false;
+ $('duo-button').querySelector('strong').textContent=duoInvite?'친구와 내 라이딩 취향 비교하기':'친구와 라이딩 취향 비교';
  const genres=$('genre-results');genres.replaceChildren();picks.slice(0,share?2:state.mode==='deep'?8:2).forEach((item,i)=>{if(!item.genre)return;
  const row=document.createElement('div');row.className='genre-row';const head=document.createElement('div');const label=document.createElement('span');label.className='genre-label';label.textContent=`${i+1}위 · ${item.genre.name}`;const desc=document.createElement('small');desc.textContent=item.genre.desc;head.append(label,desc);const num=document.createElement('span');num.className='genre-score';num.textContent=item.score===null?'':String(item.score);const bar=document.createElement('div');bar.className='bar-track';const fill=document.createElement('div');fill.className='bar-fill';fill.style.width=`${item.score||0}%`;bar.append(fill);if(item.score===null)bar.hidden=true;row.append(head,num,bar);genres.append(row);
  });
  const axes=$('axis-results');axes.replaceChildren();if(!share){Object.entries(result.axes).sort((a,b)=>b[1]-a[1]).slice(0,state.mode==='deep'?8:3).forEach(([k,v])=>{const item=document.createElement('div');item.className='axis-line';const span=document.createElement('span');span.textContent=AXES[k];const track=document.createElement('div');track.className='axis-track';const fill=document.createElement('i');fill.style.width=v+'%';track.append(fill);const b=document.createElement('b');b.textContent=v;item.append(span,track,b);axes.append(item);});}else{const p=document.createElement('p');p.className='fine-print';p.textContent='공유 링크에는 답변과 취향 세부 정보가 들어 있지 않습니다.';axes.append(p);}
  const margin=!share?picks[0].score-picks[1].score:null;$('result-insight').textContent=share?'공유된 결과는 요약 정보만 표시합니다.':margin<=4?`상위 두 장르의 점수 차이가 ${margin}점으로 작아요. 두 스타일 모두 살펴보세요.`:`${AXES[Object.keys(result.axes).sort((a,b)=>result.axes[b]-result.axes[a])[0]]}에 대한 선호가 상대적으로 강하게 나타났어요.`;
  $('result-extra-analysis').hidden=Boolean(share)||state.mode!=='deep';
- if(!share&&state.mode==='deep'){$('deep-plus').textContent='추천을 이해할 때는 점수뿐 아니라 불편을 느낄 조건도 확인하세요. ‘'+AXES[Object.keys(result.axes).sort((a,b)=>result.axes[a]-result.axes[b])[0]]+'’의 우선순위는 비교적 낮았어요. 장르 내부에서도 차종별 차이가 크니 실제로 확인해 보세요.';}
+ $('axis-note').textContent=!share&&state.mode==='deep'?'공통 객관식 16문항과 5단계 선호 응답 24문항을 함께 계산한 상대적 취향 지표입니다.':'선택한 답변에서 상대적으로 자주 나타난 선호입니다.';
+ if(!share&&state.mode==='deep'){$('deep-plus').textContent='추천을 이해할 때는 점수뿐 아니라 불편을 느낄 조건도 확인하세요. ‘'+AXES[Object.keys(result.axes).sort((a,b)=>result.axes[a]-result.axes[b])[0]]+'’의 우선순위는 비교적 낮았어요. 장르 내부에서도 차종별 차이가 크니 실제로 확인해 보세요.'+(result.unrated?' 경험이 없어 판단을 보류한 '+result.unrated+'개 문항은 점수 계산에서 제외했어요.':'');}
  const mod=$('model-examples');mod.replaceChildren();picks.slice(0,2).forEach(x=>{if(!x.genre)return;const p=document.createElement('div');p.className='model-item';const b=document.createElement('b');b.textContent=x.genre.name;const small=document.createElement('span');small.textContent=x.genre.models.join(' · ');p.append(b,small);mod.append(p);});
+ drawSignature($('dna-signature-svg'),displayAxesForResult(result));
+ document.querySelector('.signature-footnote').textContent=share?'공유된 장르 요약으로 만든 패턴 · 세부 점수 제외':'나의 여덟 가지 라이딩 취향';
+ $('dna-signature-svg').setAttribute('aria-label',share?'공유된 추천 장르를 바탕으로 만든 장식 패턴':'8가지 라이딩 취향 지표에 따라 만들어진 도형');
  renderPersonalitySummary(share);$('share-feedback').textContent='';
 }
 function mbtiParts(){return [['EI','E','I'],['SN','N','S'],['TF','T','F'],['JP','J','P']];}
@@ -228,43 +392,176 @@ function renderPersonalitySummary(shared){const estimated=shared?shared.estimate
  $('mbti-actions').hidden=Boolean(shared);$('mbti-start-label').textContent=state.mode==='deep'?'예상 MBTI 검사 · 20문항':'예상 MBTI 검사 · 8문항';
  if(!shared&&state.estimateLength===8&&state.mode==='deep')$('mbti-start-label').textContent='예상 MBTI 심화 · 추가 12문항';
 }
+function revealPersonality(){
+ const card=$('mbti-card');card.classList.remove('mbti-revealing');
+ requestAnimationFrame(()=>{if(state.screen!=='result')return;
+  card.scrollIntoView({block:'start',behavior:'instant'});
+  if(motionEnabled())card.classList.add('mbti-revealing');
+  $('mbti-title').focus({preventScroll:true});
+ });
+}
 function renderMbti(){const total=mbtiTotal(),at=state.personalityIndex,question=PERSONALITY_ITEMS[at];if(!question){show('result');return;}
  $('mbti-progress-label').textContent=String(at+1).padStart(2,'0')+' / '+total;$('mbti-question').textContent=question.t;
+ updateProgressMotion($('mbti-progress-track'));
  const percent=Math.round(at/total*100);$('mbti-progress-fill').style.width=percent+'%';$('mbti-progress-track').setAttribute('aria-valuenow',String(percent));
- const list=$('mbti-choices');list.replaceChildren();['전혀 아니다','아니다','보통이다','그렇다','매우 그렇다'].forEach((txt,i)=>{const b=document.createElement('button');b.type='button';b.className='likert-option';b.textContent=txt;b.classList.toggle('chosen',state.personality[at]===i-2);b.setAttribute('aria-pressed',String(state.personality[at]===i-2));b.addEventListener('click',()=>{state.personality[at]=i-2;if(at===total-1){const r=estimateMbti(total);state.estimated=r.type;state.estimateLength=total;show('result');toast('예상 성격 유형을 추가했어요.');}else{state.personalityIndex++;show('mbti',{focus:false});}});list.append(b);});$('mbti-prev').disabled=at===0;
+ const list=$('mbti-choices');list.replaceChildren();['전혀 아니다','아니다','보통이다','그렇다','매우 그렇다'].forEach((txt,i)=>{const b=document.createElement('button');b.type='button';b.className='likert-option';b.textContent=txt;b.classList.toggle('chosen',state.personality[at]===i-2);b.setAttribute('aria-pressed',String(state.personality[at]===i-2));b.addEventListener('click',()=>{state.personality[at]=i-2;if(at===total-1){const r=estimateMbti(total);state.estimated=r.type;state.estimateLength=total;show('result',{focus:false});revealPersonality();toast('예상 성격 유형을 추가했어요.');}else{state.personalityIndex++;show('mbti',{focus:false});}});list.append(b);});$('mbti-prev').disabled=at===0;
 }
 function renderManual(){const wrap=$('manual-pairs');wrap.replaceChildren();const labels=[['에너지 방향','E','I'],['정보 선호','S','N'],['판단 선호','T','F'],['생활 방식','J','P']];labels.forEach(([tag,a,b],index)=>{const row=document.createElement('div');row.className='manual-pair';const label=document.createElement('span');label.textContent=tag;row.append(label);[a,b].forEach(letter=>{const btn=document.createElement('button');btn.type='button';btn.textContent=letter;btn.classList.toggle('selected',state.manualDraft[index]===letter);btn.setAttribute('aria-pressed',String(state.manualDraft[index]===letter));btn.addEventListener('click',()=>{state.manualDraft[index]=letter;renderManual();persist();});row.append(btn);});wrap.append(row);});}
 function manualSave(){if(state.manualDraft.some(x=>!x)){toast('4개 항목을 모두 골라 주세요.');return;}state.mbtiManual=state.manualDraft.join('');show('result');toast('입력한 MBTI를 별도로 표시했어요.');}
 function shareData(){if(state.shared)return state.sharedData;const r=calculate();return {type:r.type,mode:state.mode,genres:r.genres.slice(0,2).map(x=>({id:x.genre.id})),estimated:state.estimated,self:state.mbtiManual};}
 function allowedMBTI(s){return typeof s==='string'&&s.length===4&&['EI','SN','TF','JP'].every((p,i)=>p.includes(s[i])||s[i]==='?');}
-function parseShared(){const p=new URLSearchParams(location.search);if(!p.has('r')||!p.has('g'))return false;const type=Number(p.get('r')),genres=p.get('g').split(','),mode=p.get('d')==='1'?'deep':'quick';if(!Number.isInteger(type)||type<0||type>15||genres.length!==2||!genres.every(id=>GENRES.some(x=>x.id===id)))return false;
- state.shared=true;state.sharedData={type,genres:genres.map(id=>({id})),mode,estimated:allowedMBTI(p.get('e'))?p.get('e'):null,self:allowedMBTI(p.get('s'))&&!p.get('s').includes('?')?p.get('s'):null};return true;}
-function shareLink(){const d=shareData(),url=new URL(location.href);url.hash='';url.search='';url.searchParams.set('r',String(d.type));url.searchParams.set('g',d.genres.map(x=>x.id).join(','));if(d.mode==='deep')url.searchParams.set('d','1');if(d.estimated)url.searchParams.set('e',d.estimated);if(d.self)url.searchParams.set('s',d.self);return url.href;}
-async function share(){const link=shareLink();if(navigator.share){try{await navigator.share({title:'RIDE DNA — 내 라이더 유형',text:'나의 라이더 성향을 확인해 보세요.',url:link});$('share-feedback').textContent='공유했어요.';return;}catch(e){if(e.name==='AbortError')return;}}
- try{await navigator.clipboard.writeText(link);$('share-feedback').textContent='링크를 복사했어요.';}catch{const t=document.createElement('textarea');t.value=link;document.body.append(t);t.select();const ok=document.execCommand('copy');t.remove();$('share-feedback').textContent=ok?'링크를 복사했어요.':link;}}
-function drawCanvas(){const d=shareData(),c=document.createElement('canvas');c.width=1080;c.height=1350;const ctx=c.getContext('2d');if(!ctx){toast('이미지 저장이 지원되지 않아요.');return;}
- ctx.fillStyle='#111114';ctx.fillRect(0,0,1080,1350);ctx.fillStyle='#d23b4b';ctx.fillRect(0,0,220,12);
- const tx=(text,x,y,font,color)=>{ctx.font=font;ctx.fillStyle=color;ctx.fillText(text,x,y);};
- const wrap=(text,y,width,font,line=97,max=2)=>{ctx.font=font;let row='',lines=[];for(const ch of Array.from(text)){if(row&&ctx.measureText(row+ch).width>width){lines.push(row);row=ch;}else row+=ch;}if(row)lines.push(row);lines.slice(0,max).forEach((v,i)=>tx(v,74,y+i*line,font,'#f4eeee'));return y+(Math.min(max,lines.length)-1)*line;};
- tx('RIDE DNA',74,145,'800 66px system-ui,sans-serif','#f2eeec');tx(d.mode==='deep'?'DEEP RESULT':'QUICK RESULT',74,210,'500 25px system-ui,sans-serif','#bcb2b8');ctx.strokeStyle='#454047';ctx.beginPath();ctx.moveTo(74,253);ctx.lineTo(1000,253);ctx.stroke();
- tx('나의 라이더 유형',74,319,'600 29px system-ui,sans-serif','#e7a2af');const title=TYPES[d.type]?.[0]||'나의 라이더 유형';const y=wrap(title,442,928,'750 85px system-ui,sans-serif',109,2);tx(TYPES[d.type]?.[1]||'',74,Math.max(580,y+100),'560 27px system-ui,sans-serif','#d1c6cc');
- ctx.beginPath();ctx.moveTo(74,680);ctx.lineTo(1000,680);ctx.stroke();tx('추천 바이크 스타일',74,752,'540 26px system-ui,sans-serif','#bdb3bb');wrap(GENRES.find(x=>x.id===d.genres[0]?.id)?.name||'—',835,920,'700 58px system-ui,sans-serif',70,2);
- tx('두 번째 스타일',74,974,'500 25px system-ui,sans-serif','#a99da5');tx(GENRES.find(x=>x.id===d.genres[1]?.id)?.name||'—',74,1030,'650 38px system-ui,sans-serif','#f2eeee');
- if(d.estimated)tx('예상 MBTI   '+d.estimated,74,1135,'650 31px system-ui,sans-serif','#e5a7af');
- if(d.self)tx('내 MBTI   '+d.self,74,d.estimated?1183:1135,'520 27px system-ui,sans-serif','#c0b3bb');
- ctx.fillStyle='#61575d';ctx.fillRect(74,1220,925,1);tx('RIDE DNA  ·  무료 · 비공식 취향 테스트',74,1291,'450 23px system-ui,sans-serif','#b7afb5');
- try{const a=document.createElement('a');a.href=c.toDataURL('image/png');a.download='RIDE_DNA_RESULT.png';document.body.append(a);a.click();a.remove();toast('결과 이미지가 저장됐어요.');}catch{toast('이미지 저장에 실패했어요.');}}
+function cleanSummary(d){
+ if(!d||!Number.isInteger(d.type)||d.type<0||d.type>=TYPES.length||!['quick','deep'].includes(d.mode)||!Array.isArray(d.genres)||d.genres.length!==2)return null;
+ const ids=d.genres.map(g=>g&&g.id);
+ if(new Set(ids).size!==2||!ids.every(id=>GENRES.some(x=>x.id===id)))return null;
+ return {type:d.type,mode:d.mode,genres:ids.map(id=>({id})),estimated:allowedMBTI(d.estimated)?d.estimated:null,self:allowedMBTI(d.self)&&!d.self.includes('?')?d.self:null};
+}
+function parseShared(){
+ if(location.search.length>600)return false;
+ const p=new URLSearchParams(location.search);
+ if(!p.has('r')||!p.has('g'))return false;
+ if(p.getAll('r').length!==1||p.getAll('g').length!==1)return false;
+ const r=p.get('r'), ids=p.get('g').split(',');
+ if(!/^(?:[0-9]|1[0-5])$/.test(r)||ids.length!==2)return false;
+ const safe=cleanSummary({type:Number(r),mode:p.get('d')==='1'?'deep':'quick',genres:ids.map(id=>({id})),estimated:p.get('e'),self:p.get('s')});
+ if(!safe)return false;
+ state.shared=true;state.sharedData=safe;
+ if(p.get('duo')==='1'){duoInvite=safe;saveInvite();}
+ return true;
+}
+function baseShareUrl(d,opts={}){
+ const safe=cleanSummary(d);if(!safe)throw Error('올바른 결과가 없습니다.');
+ const u=new URL(location.pathname,location.origin);
+ u.searchParams.set('r',String(safe.type));
+ u.searchParams.set('g',safe.genres.map(g=>g.id).join(','));
+ if(safe.mode==='deep')u.searchParams.set('d','1');
+ if(opts.mbti){if(safe.estimated)u.searchParams.set('e',safe.estimated);if(safe.self)u.searchParams.set('s',safe.self);}
+ if(opts.duo)u.searchParams.set('duo','1');
+ return u.href;
+}
+function getShareOptions(){return {mbti:$('share-mbti').checked,duo:$('share-duo').checked};}
+function shareLink(){return baseShareUrl(shareData(),getShareOptions());}
+function displayShareOptions(){const d=cleanSummary(shareData());$('share-summary-type').textContent=TYPES[d.type][0];$('share-summary-genre').textContent=d.genres.map(g=>GENRES.find(x=>x.id===g.id)?.name).join(' · ');}
+function openShare(invite=false){displayShareOptions();$('share-kakao').hidden=!kakaoConfigKey();$('kakao-unconfigured').hidden=Boolean(kakaoConfigKey());$('share-mbti').checked=false;$('share-duo').checked=invite;$('share-dialog-feedback').textContent='';$('share-dialog').showModal();}
+async function nativeShare(){const url=shareLink();if(!navigator.share){await copyShare();return;}
+ try{await navigator.share({title:'RIDE DNA — 나의 라이더 유형',text:`${TYPES[shareData().type][0]} · 내 라이딩 취향`,url});$('share-dialog-feedback').textContent='공유 메뉴에서 전송을 선택했어요.';}
+ catch(e){if(e?.name!=='AbortError')await copyShare();}
+}
+async function copyShare(){const link=shareLink();let ok=false;
+ try{await navigator.clipboard.writeText(link);ok=true;}catch{}
+ if(!ok){const t=document.createElement('textarea');t.value=link;t.setAttribute('readonly','');t.style.position='fixed';t.style.top='-1000px';document.body.append(t);t.select();try{ok=document.execCommand('copy');}catch{}t.remove();}
+ $('share-dialog-feedback').textContent=ok?'링크를 복사했어요.':`복사가 제한되었어요. 주소: ${link}`;
+}
+function kakaoConfigKey(){const key=window.RIDE_DNA_CONFIG?.kakaoJavaScriptKey;return typeof key==='string'&&/^[a-f\d]{32}$/i.test(key)?key:'';}
+function preloadKakao(){
+ if(!kakaoConfigKey()||window.Kakao||document.querySelector('script[data-kakao-sdk]'))return;
+ const s=document.createElement('script');s.src='https://t1.kakaocdn.net/kakao_js_sdk/2.8.5/kakao.min.js';
+ s.integrity='sha384-v6JKY3z4FUkWq21oZDHZe74YvuPk/WUrVLrDHTBojHXClOSa3iXy7sCXPY1jkFbj';s.crossOrigin='anonymous';s.async=true;s.dataset.kakaoSdk='1';
+ s.onload=()=>{try{if(window.Kakao&&!Kakao.isInitialized())Kakao.init(kakaoConfigKey());}catch{}};
+ s.onerror=()=>{$('share-dialog-feedback').textContent='카카오 연결을 불러오지 못했어요. 링크 복사를 이용할 수 있어요.';};
+ document.head.append(s);
+}
+function kakaoShare(){
+ const k=kakaoConfigKey();if(!k){$('share-dialog-feedback').textContent='카카오 개발자 키가 아직 설정되지 않았어요. 기본 공유 메뉴를 이용할 수 있어요.';return;}
+ if(!window.Kakao?.Share){preloadKakao();$('share-dialog-feedback').textContent='카카오 공유 기능을 준비하는 중이에요. 잠시 후 다시 눌러 주세요.';return;}
+ try{
+  if(!Kakao.isInitialized())Kakao.init(k);
+  const d=cleanSummary(shareData()),url=shareLink();
+  const first=GENRES.find(g=>g.id===d.genres[0].id)?.name;
+  Kakao.Share.sendDefault({objectType:'feed',content:{title:`${TYPES[d.type][0]} · RIDE DNA`,description:`어울리는 바이크: ${first}${getShareOptions().mbti&&d.estimated?' · 예상 '+d.estimated:''}`,imageUrl:new URL('assets/social-preview.jpg',location.href).href,link:{mobileWebUrl:url,webUrl:url}},buttons:[{title:getShareOptions().duo?'친구와 비교하기':'라이더 결과 보기',link:{mobileWebUrl:url,webUrl:url}}]});
+  $('share-dialog-feedback').textContent='카카오톡에서 대화 상대를 선택해 주세요.';
+ }catch(e){$('share-dialog-feedback').textContent='카카오 설정 또는 도메인을 확인해 주세요. 링크 복사도 사용할 수 있어요.';}
+}
+function saveInvite(){try{if(duoInvite)sessionStorage.setItem(DUO_SESSION,JSON.stringify(duoInvite));else sessionStorage.removeItem(DUO_SESSION);}catch{}}
+function loadInvite(){try{const s=sessionStorage.getItem(DUO_SESSION)||'';if(s.length>500)return null;return cleanSummary(JSON.parse(s));}catch{return null;}}
+function openDuo(){
+ if(state.shared){duoInvite=cleanSummary(shareData());saveInvite();}
+ if(!duoInvite){openShare(true);return;}
+ const own=state.shared?savedOwn:(state.completed?cleanSummary(shareData()):null);
+ if(!own){$('share-dialog').close?.();action('choose');toast('내 라이더 유형을 찾은 뒤 친구와 비교할 수 있어요.');return;}
+ show('duo');
+}
+function renderDuo(){
+ const own=state.shared?savedOwn:(state.completed?cleanSummary(shareData()):null),f=duoInvite;
+ if(!own||!f){show('result',{nav:'replace'});return;}
+ $('duo-my-type').textContent=TYPES[own.type][0];$('duo-friend-type').textContent=TYPES[f.type][0];
+ const names=d=>d.genres.map(g=>GENRES.find(x=>x.id===g.id)?.name||'—');
+ $('duo-my-genre').textContent=names(own).join(' / ');$('duo-friend-genre').textContent=names(f).join(' / ');
+ const same=own.genres.filter(g=>f.genres.some(x=>x.id===g.id)).map(x=>GENRES.find(y=>y.id===x.id)?.name);
+ $('duo-match-heading').textContent=same.length?`공통으로 끌리는 스타일: ${same.join(' · ')}`:'서로 다른 스타일을 즐기는 조합';
+ $('duo-match-description').textContent=same.length?'추천 장르에 공통점이 있어요. 서로 어떤 부분을 좋아하는지 이야기해 보세요.':'추천받은 상위 장르가 달라요. 이동 목적과 원하는 조작감을 비교해 보는 것도 재미있겠어요.';
+ const tags=$('duo-common');tags.replaceChildren();[...new Set([...names(own),...names(f)])].forEach(name=>{const b=document.createElement('span');b.textContent=name;tags.append(b);});
+}
+function canvasWrap(ctx,str,x,y,maxWidth,font,lineHeight,linesMax=3){
+ ctx.font=font;const lines=[];let acc='';for(const c of Array.from(str)){if(acc&&ctx.measureText(acc+c).width>maxWidth){lines.push(acc);acc=c;}else acc+=c;}if(acc)lines.push(acc);
+ lines.slice(0,linesMax).forEach((line,i)=>ctx.fillText(line,x,y+i*lineHeight));return Math.min(lines.length,linesMax);
+}
+const IMAGE_SIZES={feed:[1080,1350],story:[1080,1920],square:[1080,1080]};
+function createCard(){
+ const choice=document.querySelector('input[name="studio-size"]:checked')?.value||'feed';
+ const [w,h]=IMAGE_SIZES[choice]||IMAGE_SIZES.feed,c=$('studio-canvas'),ctx=c.getContext('2d');if(!ctx)return;
+ c.width=w;c.height=h;const d=cleanSummary(shareData()),first=GENRES.find(x=>x.id===d.genres[0].id),second=GENRES.find(x=>x.id===d.genres[1].id);
+ // 고정된 로컬 데이터만 캔버스에 그립니다. URL 문자열이나 사용자 HTML 삽입 없음.
+ ctx.fillStyle='#101116';ctx.fillRect(0,0,w,h);
+ const grd=ctx.createLinearGradient(0,0,w,h);grd.addColorStop(0,'#191921');grd.addColorStop(1,'#101116');ctx.fillStyle=grd;ctx.fillRect(0,0,w,h);
+ ctx.fillStyle='#DB4354';ctx.fillRect(0,0,13,h);ctx.fillRect(76,105,w-152,5);
+ // Share card uses the same eight-axis static signature as the animated on-page pattern.
+ const sigAxes=state.shared?displayAxesForResult(d):calculate().axes;
+ const sigPts=signaturePoints(sigAxes);ctx.save();ctx.translate(w-168,205);ctx.scale(.70,.70);ctx.translate(-110,-110);
+ ctx.strokeStyle='rgba(210,185,193,.18)';ctx.lineWidth=1.5;[44,76,103].forEach(r=>{ctx.beginPath();ctx.arc(110,110,r,0,Math.PI*2);ctx.stroke();});
+ ctx.beginPath();sigPts.forEach(([x,y],i)=>i===0?ctx.moveTo(x,y):ctx.lineTo(x,y));ctx.closePath();ctx.fillStyle='rgba(210,59,75,.20)';ctx.fill();ctx.strokeStyle='#ed7482';ctx.lineWidth=3;ctx.stroke();
+ sigPts.forEach(([x,y])=>{ctx.beginPath();ctx.arc(x,y,3.8,0,Math.PI*2);ctx.fillStyle='#f1a3ac';ctx.fill();});ctx.restore();
+ const txt=(str,x,y,font,color)=>{ctx.fillStyle=color;ctx.font=font;ctx.fillText(str,x,y);};
+ txt('RIDE DNA',76,192,'800 66px system-ui, sans-serif','#F4F2F1');
+ txt(d.mode==='deep'?'DEEP RIDER REPORT':'RIDER ID CARD',76,247,'600 24px system-ui, sans-serif','#B9AFB6');
+ const square=h===1080,top=square?300:h===1350?405:560,titleSize=square?64:82,lh=square?79:107;
+ txt('MY RIDER TYPE',76,top,'700 27px system-ui, sans-serif','#DF7F8B');
+ ctx.fillStyle='#F9F6F4';const count=canvasWrap(ctx,TYPES[d.type][0],76,top+100,w-152,`750 ${titleSize}px system-ui, sans-serif`,lh,3);
+ const englishY=top+100+count*lh+32;
+ txt(TYPES[d.type][1],76,englishY,'560 27px system-ui, sans-serif','#C7BFC5');
+ const separator=square?640:h===1350?870:1120;
+ ctx.fillStyle='#454149';ctx.fillRect(76,separator,w-152,2);
+ txt('MOTORCYCLE MATCH',76,separator+66,'700 25px system-ui, sans-serif','#C4BAC0');
+ ctx.fillStyle='#FFFFFF';canvasWrap(ctx,first?.name||'—',76,separator+139,w-152,`720 ${square?42:51}px system-ui, sans-serif`,63,2);
+ txt(`2ND PICK   ${second?.name||'—'}`,76,separator+198,'550 28px system-ui, sans-serif','#CDC4C8');
+ if($('studio-mbti').checked&&(d.estimated||d.self))txt(`MBTI   ${d.self||d.estimated}${d.self?' · 직접 입력':' · 비공식 예상'}`,76,separator+263,'600 26px system-ui, sans-serif','#F09BA6');
+ ctx.fillStyle='#514C53';ctx.fillRect(76,h-130,w-152,2);
+ txt('RIDE DNA  /  EST. 2026',76,h-68,'500 23px system-ui, sans-serif','#ADA5AC');
+ cardFile=null;const version=++imageVersion;
+ c.toBlob(blob=>{if(blob&&version===imageVersion)cardFile=new File([blob],`RIDE_DNA_${choice.toUpperCase()}.png`,{type:'image/png'});},'image/png');
+}
+function openStudio(){if($('share-dialog').open)$('share-dialog').close();$('studio-feedback').textContent='';$('studio-mbti').checked=false;document.querySelector('input[value="feed"][name="studio-size"]').checked=true;$('studio-dialog').showModal();createCard();}
+function downloadCard(){const c=$('studio-canvas');try{const a=document.createElement('a');a.download=`RIDE_DNA_${(document.querySelector('input[name="studio-size"]:checked')?.value||'feed').toUpperCase()}.png`;a.href=c.toDataURL('image/png');document.body.append(a);a.click();a.remove();$('studio-feedback').textContent='PNG 저장을 요청했어요.';}catch{$('studio-feedback').textContent='저장할 수 없어요. 브라우저의 공유 기능을 이용해 주세요.';}}
+async function sendCard(){if(!cardFile){$('studio-feedback').textContent='이미지를 준비하는 중이에요. 잠시 뒤 다시 눌러 주세요.';return;}
+ if(!navigator.share||!navigator.canShare?.({files:[cardFile]})){$('studio-feedback').textContent='이 브라우저는 이미지 공유를 지원하지 않아요. PNG 저장을 이용해 주세요.';return;}
+ try{await navigator.share({files:[cardFile],title:'RIDE DNA · 라이더 카드'});$('studio-feedback').textContent='공유 메뉴를 열었어요.';}catch(e){if(e.name!=='AbortError')$('studio-feedback').textContent='공유할 수 없어요. PNG 저장을 이용해 주세요.';}
+}
 function action(name){if(name==='home'){state.shared=false;state.sharedData=null;history.replaceState({rideDna:true,screen:'home'},'',location.pathname);show('home');return;}
- if(name==='choose'){show('choose');return;}if(name==='quick'||name==='deep'){chooseMode(name);return;}
+ if(name==='choose'){show('choose');return;}if(name==='duo'){openDuo();return;}if(name==='quick'||name==='deep'){chooseMode(name);return;}
  if(name==='resume'){show('quiz');return;}if(name==='restart'){state.shared=false;state.sharedData=null;state=blankState();history.replaceState({rideDna:true,screen:'choose'},'',location.pathname);show('choose');return;}
  if(name==='upgrade'){upgrade();return;}if(name==='result'){show('result');return;}
  if(name==='mbti-test'){if(state.estimateLength===8&&state.mode==='deep'&&state.personality.slice(0,8).every(v=>v!==null)){state.personalityIndex=8;}else{state.personalityIndex=0;state.personality=Array(20).fill(null);}show('mbti');return;}
  if(name==='mbti-manual'){state.manualDraft=state.mbtiManual?state.mbtiManual.split(''):[null,null,null,null];show('manual');return;}}
+setMotionMode(readMotionMode(),{save:false});
+$('motion-settings-button').addEventListener('click',openMotionSettings);
+$('motion-close').addEventListener('click',()=>$('motion-dialog').close());
+document.querySelectorAll('input[name="motion-mode"]').forEach(x=>x.addEventListener('change',()=>setMotionMode(x.value)));
+$('reveal-skip').addEventListener('click',()=>dismissReveal());
+$('reveal-overlay').addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();dismissReveal();}});
+$('motion-dialog').addEventListener('click',e=>{if(e.target===$('motion-dialog'))$('motion-dialog').close();});
 document.querySelectorAll('[data-action]').forEach(b=>b.addEventListener('click',()=>action(b.dataset.action)));
 $('quiz-exit').addEventListener('click',quit);$('quiz-prev').addEventListener('click',prev);
 $('exit-cancel').addEventListener('click',()=>$('exit-dialog').close());$('exit-confirm').addEventListener('click',()=>{$('exit-dialog').close();show('home');});
 $('mbti-prev').addEventListener('click',()=>{state.personalityIndex=Math.max(0,state.personalityIndex-1);show('mbti');});
-$('manual-save').addEventListener('click',manualSave);$('share-button').addEventListener('click',share);$('image-button').addEventListener('click',drawCanvas);
+$('manual-save').addEventListener('click',manualSave);
+$('share-button').addEventListener('click',()=>openShare(false));$('image-button').addEventListener('click',openStudio);
+$('duo-button').addEventListener('click',openDuo);$('duo-share-button').addEventListener('click',()=>openShare(true));
+$('share-kakao').addEventListener('click',kakaoShare);$('share-native').addEventListener('click',nativeShare);$('share-copy').addEventListener('click',copyShare);
+$('share-open-studio').addEventListener('click',openStudio);$('studio-download').addEventListener('click',downloadCard);$('studio-native').addEventListener('click',sendCard);
+document.querySelectorAll('input[name="studio-size"],#studio-mbti').forEach(x=>x.addEventListener('change',createCard));
+document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',()=>$(b.dataset.close)?.close()));
+['share-dialog','studio-dialog'].forEach(id=>$(id).addEventListener('click',e=>{if(e.target===$(id))$(id).close();}));
+$('studio-dialog').addEventListener('close',()=>{imageVersion++;cardFile=null;const c=$('studio-canvas');c.width=1;c.height=1;});
 window.addEventListener('popstate',e=>{if(!e.state?.rideDna||!screens[e.state.screen])return;const h=e.state;if(h.mode&&MODE_CONFIG[h.mode])state.mode=h.mode;
  if(Number.isInteger(h.index))state.index=Math.max(0,Math.min(h.index,40));if(Number.isInteger(h.adaptIndex))state.adaptIndex=Math.max(0,Math.min(h.adaptIndex,state.adaptive.length-1));if(Number.isInteger(h.personalityIndex))state.personalityIndex=Math.max(0,Math.min(h.personalityIndex,19));
  if(h.screen==='quiz'&&state.completed&&!state.shared){
@@ -276,4 +573,8 @@ window.addEventListener('popstate',e=>{if(!e.state?.rideDna||!screens[e.state.sc
  }
  show(h.screen,{nav:'silent'});
 });
-restore();if(parseShared())show('result',{nav:'replace',focus:false});else show(state.screen,{nav:'replace',focus:false});
+restore();
+if(state.completed&&!state.shared){savedOwn=cleanSummary(shareData());}
+duoInvite=loadInvite();
+if(parseShared())show('result',{nav:'replace',focus:false});else show(state.screen,{nav:'replace',focus:false});
+preloadKakao();

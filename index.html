@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#111114"><meta name="color-scheme" content="dark">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://t1.kakaocdn.net; style-src 'self'; img-src 'self' data: https://*.kakao.com https://*.kakaocdn.net; font-src 'self'; connect-src 'self' https://*.kakao.com https://*.kakaocdn.net; frame-src https://*.kakao.com https://*.kakaocdn.net; form-action 'self'; upgrade-insecure-requests"><meta name="theme-color" content="#111114"><meta name="color-scheme" content="dark">
   <meta name="description" content="나는 어떤 라이더일까? 빠른 검사 16문항과 심화 검사 40문항으로 라이딩 취향과 어울리는 바이크 스타일을 알아보세요. 무료 · 회원가입 없음.">
   <meta property="og:title" content="RIDE DNA | 나는 어떤 라이더일까?">
   <meta property="og:description" content="빠른 검사와 심화 검사 중 선택하세요. 라이더 유형, 바이크 스타일, 선택형 예상 MBTI까지.">
@@ -11,8 +11,9 @@
   <meta property="og:image" content="https://1m58ine.github.io/Ride-DNA/assets/social-preview.jpg">
   <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="./styles.css?v=1.3.0">
-  <script src="./app.js?v=1.3.0" defer></script>
+  <link rel="stylesheet" href="./styles.css?v=1.6.0">
+  <script src="./config.js?v=1.6.0" defer></script>
+  <script src="./app.js?v=1.6.0" defer></script>
   <noscript><style>body:before{content:"RIDE DNA 테스트를 이용하려면 브라우저의 JavaScript 기능이 필요합니다.";display:block;background:#e1d4d4;color:#18181b;text-align:center;padding:15px}</style></noscript>
   <title>RIDE DNA — 나의 라이더 유형</title>
 </head>
@@ -20,7 +21,7 @@
 <a class="skip-link" href="#main">본문 바로가기</a>
 <header class="header" id="header">
   <button class="brand" type="button" data-action="home" aria-label="RIDE DNA 홈으로">RIDE <span>DNA</span><i aria-hidden="true"></i></button>
-  <a class="header-info" href="./about.html">안내</a>
+  <div class="header-controls"><button class="motion-settings-toggle" type="button" id="motion-settings-button" aria-label="애니메이션 설정 열기"><span class="motion-led" aria-hidden="true"></span> 연출 설정</button><a class="header-info" href="./about.html">안내</a></div>
 </header>
 <main id="main">
   <section id="home-screen" class="screen home-screen" aria-labelledby="home-title">
@@ -54,10 +55,10 @@
     <p class="choice-description">내가 원하는 깊이만큼. 두 방식 모두 무료이며, 라이딩 경험이 없어도 참여할 수 있어요.</p>
     <div class="mode-options">
       <button class="mode-card" type="button" data-action="quick"><span class="mode-icon">01</span><strong>빠른 유형 찾기</strong><small>가볍게 알아보는 나의 라이더 성향</small><span class="mode-footer">16문항 · 약 3분 <b aria-hidden="true">↗</b></span></button>
-      <button class="mode-card" type="button" data-action="deep"><span class="mode-icon">02</span><strong>진지한 유형 찾기</strong><small>취향의 우선순위까지 살펴보는 심화 검사</small><span class="mode-footer">40문항 · 약 8~12분 · 추가 질문 가능 <b aria-hidden="true">↗</b></span></button>
+      <button class="mode-card" type="button" data-action="deep"><span class="mode-icon">02</span><strong>진지한 유형 찾기</strong><small>5단계 선택으로 취향의 강도를 알아보는 심화 검사</small><span class="mode-footer">40문항 · 추가 24문항은 5단계 응답 <b aria-hidden="true">↗</b></span></button>
     </div>
     <div id="continue-box" class="continue-box" hidden><span id="resume-description"></span><button type="button" class="btn-ghost" data-action="resume">이어하기 →</button></div>
-    <p class="choice-footnote">16개 공통 질문은 두 테스트에서 공유돼요. 빠른 검사 후에도 중복 응답 없이 심화 검사로 이어갈 수 있어요.</p>
+    <p class="choice-footnote">빠른 검사 16문항은 그대로 유지해요. 심화 검사는 추가 24문항을 5단계로 답하며, 바로 이어할 수 있어요.</p>
   </section>
 
   <section id="quiz-screen" class="screen quiz-screen" aria-label="라이딩 성향 테스트" hidden>
@@ -70,30 +71,40 @@
   <section id="result-screen" class="screen result-screen" aria-labelledby="result-title" hidden>
     <div class="result-top"><span id="result-mode">나의 라이더 테스트 결과</span><button type="button" class="text-back" data-action="restart">처음부터 다시 ↗</button></div>
     <div class="result-header">
-      <p class="result-kicker">나의 라이더 유형</p><p class="result-serial" id="result-serial"></p>
-      <h1 id="result-title" tabindex="-1"></h1>
-      <p class="result-english" id="result-english"></p>
-      <p class="result-description" id="result-description"></p>
+      <div class="result-hero-grid">
+        <div class="result-hero-copy">
+          <p class="result-kicker">나의 라이더 유형</p><p class="result-serial" id="result-serial"></p>
+          <h1 id="result-title" tabindex="-1"></h1>
+          <p class="result-english" id="result-english"></p>
+          <p class="result-description" id="result-description"></p>
+        </div>
+        <div class="dna-signature" aria-label="라이딩 취향 8가지 지표를 표현한 DNA 시각 패턴">
+          <div class="signature-label"><span>DNA SIGNATURE</span><i aria-hidden="true"></i></div>
+          <svg id="dna-signature-svg" class="dna-svg" viewBox="0 0 220 220" role="img" aria-label="8가지 라이딩 취향 지표에 따라 만들어진 도형"></svg>
+          <span class="signature-footnote">나의 여덟 가지 라이딩 취향</span>
+        </div>
+      </div>
       <div class="result-highlight" aria-label="바이크 스타일 추천 요약">
         <div class="result-highlight-major"><span>나와 가장 가까운 바이크</span><strong id="result-best-genre"></strong></div>
         <div class="result-highlight-minor"><span>함께 추천하는 스타일</span><strong id="result-next-genre"></strong></div>
       </div>
-      <div class="result-actions"><button type="button" id="share-button" class="btn-primary">결과 공유하기 <span aria-hidden="true">↗</span></button><button type="button" id="image-button" class="btn-ghost">이미지 저장 <span aria-hidden="true">↓</span></button></div>
+      <div class="result-actions"><button type="button" id="share-button" class="btn-primary">결과 공유하기 <span aria-hidden="true">↗</span></button><button type="button" id="image-button" class="btn-ghost">라이더 카드 만들기 <span aria-hidden="true">▣</span></button></div>
+      <button type="button" id="duo-button" class="duo-entry"><span><strong>친구와 라이딩 취향 비교</strong><small>RIDER DUO · 서로의 공통점과 차이점</small></span><span aria-hidden="true">→</span></button>
       <p id="share-feedback" class="feedback" role="status"></p>
     </div>
-    <section id="result-deep-cta" class="upgrade-strip" hidden><div><strong>조금 더 자세하게 알아볼까요?</strong><p>16개 답변을 그대로 유지하고, 추가 24문항으로 취향을 더 세밀하게 살펴보세요.</p></div><button type="button" class="btn-ghost" data-action="upgrade">심화 분석 이어하기 →</button></section>
+    <section id="result-deep-cta" class="upgrade-strip" hidden><div><strong>조금 더 자세하게 알아볼까요?</strong><p>16개 답변을 그대로 유지하고, 추가 24문항을 5단계로 답하며 취향의 강도를 살펴보세요.</p></div><button type="button" class="btn-ghost" data-action="upgrade">심화 분석 이어하기 →</button></section>
     <p id="result-insight" class="result-insight"></p>
     <div id="shared-note" class="shared-note" hidden>이것은 공유된 결과 요약이에요. 자세한 취향은 직접 테스트한 뒤 확인할 수 있어요.</div>
     <details id="result-details" class="reveal-panel">
       <summary><span>취향 분석 자세히 보기</span><span class="reveal-arrow" aria-hidden="true">⌄</span></summary>
       <div class="result-grid">
-        <div class="result-card"><div class="block-heading"><span>바이크 스타일</span><h2>추천 장르와 이유</h2></div><div id="genre-results"></div><p class="fine-print">점수는 응답에 대한 자체 취향 일치 지표로, 안전성·구매 적합도나 통계적 정확도를 나타내지 않습니다.</p></div>
+        <div class="result-card"><div class="block-heading"><span>바이크 스타일</span><h2>바이크 장르 비교</h2></div><div id="genre-results"></div><p class="fine-print">점수는 응답에 대한 자체 취향 일치 지표로, 안전성·구매 적합도나 통계적 정확도를 나타내지 않습니다.</p></div>
         <div class="result-card"><div class="block-heading"><span>취향 키워드</span><h2>내가 중요하게 여기는 것</h2></div><div id="axis-results"></div><p class="fine-print" id="axis-note">응답에서 상대적으로 자주 나타난 선호입니다.</p></div>
       </div>
     </details>
     <div id="result-extra-analysis" class="deep-analysis" hidden><strong>심화 결과를 읽는 방법</strong><p id="deep-plus"></p></div>
     <section class="mbti-card" id="mbti-card" aria-labelledby="mbti-title">
-      <div class="mbti-info"><span class="micro-label">별도 성격 분석 · 비공식</span><h2 id="mbti-title">나의 예상 MBTI</h2>
+      <div class="mbti-info"><span class="micro-label">별도 성격 분석 · 비공식</span><h2 id="mbti-title" tabindex="-1">나의 예상 MBTI</h2>
         <p>바이크 취향으로 MBTI를 단정하지 않아요. 추가 성격 질문으로 예상 유형을 추정하고, 이미 알고 있는 유형과 비교할 수 있어요.</p>
         <div id="mbti-summary" class="mbti-summary"></div><p id="mbti-comparison" class="mbti-comparison" hidden></p>
       </div>
@@ -101,6 +112,16 @@
     </section>
     <details class="reveal-panel models-reveal"><summary><span>관련 바이크 모델 예시</span><span class="reveal-arrow" aria-hidden="true">⌄</span></summary><div class="models-section"><div id="model-examples"></div><p class="fine-print">표시된 기종은 장르 이해를 위한 참고 예시입니다. 가격·판매 여부·면허·신체 적합성은 별도로 확인해야 합니다.</p></div></details>
     <div class="result-bottom"><button type="button" class="btn-plain" data-action="restart">다시 테스트하기 ↗</button></div>
+  </section>
+
+  <section id="duo-screen" class="screen duo-screen" aria-labelledby="duo-title" hidden>
+    <div class="duo-head"><button type="button" class="text-back" data-action="result">← 결과로</button><span>RIDER DUO</span></div>
+    <p class="choice-kicker">두 사람의 라이딩 취향</p><h1 id="duo-title" tabindex="-1" data-autofocus>함께 달리면<br>어떤 조합일까?</h1>
+    <p class="choice-description">한 사람의 결과가 다른 사람의 답은 아니에요. 서로의 선호를 비교하는 놀이입니다.</p>
+    <div class="duo-pair"><div class="duo-person"><span>MY RIDER</span><h2 id="duo-my-type"></h2><p id="duo-my-genre"></p></div><div class="duo-versus" aria-hidden="true">+</div><div class="duo-person"><span>FRIEND</span><h2 id="duo-friend-type"></h2><p id="duo-friend-genre"></p></div></div>
+    <div class="duo-findings"><h2 id="duo-match-heading"></h2><p id="duo-match-description"></p><div class="duo-chips" id="duo-common"></div></div>
+    <p class="fine-print">이 분석은 공유된 상위 두 장르만 비교하며 성격·실제 동행 안전성·궁합의 정확도를 판단하지 않습니다.</p>
+    <button type="button" id="duo-share-button" class="btn-primary duo-bottom">친구에게 내 결과 보내기 ↗</button>
   </section>
 
   <section id="mbti-screen" class="screen mbti-screen" aria-label="선택형 성격 질문" hidden>
@@ -115,6 +136,47 @@
 </main>
 <footer class="footer"><span>RIDE DNA © 2026</span><p>취향 탐색용 비공식 테스트 · 면허 및 탑승 적합성 판정 아님</p><a href="./about.html">서비스 안내</a></footer>
 <dialog id="exit-dialog" class="exit-dialog" aria-labelledby="exit-title"><h2 id="exit-title">잠시 나갈까요?</h2><p>지금까지 선택한 답변은 이 브라우저에 저장돼요. 나중에 이어서 할 수 있어요.</p><div><button type="button" id="exit-cancel" class="btn-ghost">계속하기</button><button type="button" id="exit-confirm" class="btn-primary">나가기</button></div></dialog>
+<dialog id="share-dialog" class="share-dialog" aria-labelledby="share-title">
+  <div class="sheet-top"><div><span class="micro-label">RIDE DNA / SHARE</span><h2 id="share-title">결과 공유하기</h2></div><button class="sheet-close" type="button" data-close="share-dialog" aria-label="닫기">×</button></div>
+  <div class="share-mini"><span>나의 라이더 유형</span><strong id="share-summary-type"></strong><small id="share-summary-genre"></small></div>
+  <label class="sheet-toggle"><input id="share-mbti" type="checkbox"><span>MBTI 정보도 함께 공유하기<small>선택한 경우에만 링크에 포함돼요.</small></span></label>
+  <label class="sheet-toggle"><input id="share-duo" type="checkbox"><span>친구와 비교하도록 초대<small>친구가 자기 검사를 완료한 뒤 비교할 수 있어요.</small></span></label>
+  <p id="kakao-unconfigured" class="kakao-info" hidden>카카오톡 직접 공유는 사이트 운영자의 카카오 JavaScript 키 등록 후 사용할 수 있습니다. 그전에는 기기 공유 메뉴에서 카카오톡을 선택하세요.</p>
+  <button type="button" id="share-kakao" class="share-option kakao"><span class="kakao-mark" aria-hidden="true">●</span> 카카오톡으로 공유 <span aria-hidden="true">↗</span></button>
+  <div class="share-option-grid"><button type="button" id="share-native" class="share-option">기기 공유 메뉴</button><button type="button" id="share-copy" class="share-option">링크 복사</button></div>
+  <button type="button" id="share-open-studio" class="share-suboption">결과 이미지 만들기 →</button>
+  <p id="share-dialog-feedback" class="feedback" role="status"></p>
+</dialog>
+<dialog id="studio-dialog" class="studio-dialog" aria-labelledby="studio-title">
+ <div class="sheet-top"><div><span class="micro-label">RIDE DNA / RIDER ID</span><h2 id="studio-title">라이더 카드 만들기</h2></div><button class="sheet-close" type="button" data-close="studio-dialog" aria-label="닫기">×</button></div>
+ <div class="studio-layout"><div class="studio-preview"><canvas id="studio-canvas" width="1080" height="1350" role="img" aria-label="결과 이미지 미리보기"></canvas></div><div class="studio-controls">
+ <fieldset><legend>이미지 비율</legend><div class="studio-radios"><label><input type="radio" name="studio-size" value="feed" checked>피드 4:5</label><label><input type="radio" name="studio-size" value="story">스토리 9:16</label><label><input type="radio" name="studio-size" value="square">정사각 1:1</label></div></fieldset>
+ <label class="sheet-toggle"><input type="checkbox" id="studio-mbti"><span>MBTI 포함<small>미선택 시 카드에 표시하지 않아요.</small></span></label>
+ <div class="studio-save"><button type="button" id="studio-download" class="btn-primary">PNG 이미지 저장 ↓</button><button type="button" id="studio-native" class="btn-ghost">다른 앱으로 보내기 ↗</button></div>
+ <p class="fine-print">1080px 고해상도 이미지 · 외부 서버 업로드 없음 · 브라우저에서 직접 생성</p><p class="feedback" id="studio-feedback" role="status"></p></div></div>
+</dialog>
+<dialog id="motion-dialog" class="motion-dialog" aria-labelledby="motion-title">
+  <div class="sheet-top"><div><span class="micro-label">RIDE DNA / MOTION</span><h2 id="motion-title">화면 연출 설정</h2></div><button type="button" class="sheet-close" data-close="motion-dialog" aria-label="닫기">×</button></div>
+  <p class="motion-description">질문과 결과를 보여주는 방식을 선택하세요. 검사 결과는 바뀌지 않아요.</p>
+  <fieldset class="motion-choices"><legend>애니메이션 강도</legend>
+    <label><input type="radio" name="motion-mode" value="standard"><span><strong>기본</strong><small>질문은 짧고, 결과 공개는 선명하게</small></span></label>
+    <label><input type="radio" name="motion-mode" value="full"><span><strong>화려하게</strong><small>빛과 선의 움직임을 더 강조</small></span></label>
+    <label><input type="radio" name="motion-mode" value="off"><span><strong>움직임 끄기</strong><small>전환 연출 없이 바로 표시</small></span></label>
+  </fieldset>
+  <p id="motion-note" class="motion-note"></p>
+  <button type="button" id="motion-close" class="btn-primary motion-done">확인</button>
+</dialog>
+<div id="reveal-overlay" class="reveal-overlay" role="dialog" aria-modal="true" aria-labelledby="reveal-heading" hidden>
+  <div class="reveal-inner">
+    <span class="reveal-overline">RIDE DNA · ANALYSIS COMPLETE</span>
+    <svg id="reveal-signature-svg" class="reveal-signature-svg" viewBox="0 0 220 220" aria-hidden="true"></svg>
+    <div class="reveal-rule" aria-hidden="true"><i></i></div>
+    <h2 id="reveal-heading">당신의 라이더 유형</h2>
+    <p id="reveal-type" class="reveal-type"></p>
+    <p id="reveal-genre" class="reveal-genre"></p>
+    <button id="reveal-skip" type="button" class="reveal-skip">바로 결과 보기 ↗</button>
+  </div>
+</div>
 <div id="toast" role="status" aria-live="polite" class="toast" hidden></div>
 </body>
 </html>
