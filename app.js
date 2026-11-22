@@ -63,21 +63,7 @@ const ADAPTIVE_AXES={
   practicality:['유지·관리의 편리함이 우선이다','관리 부담이 있어도 취향이 더 중요하다'],
   sportiness:['스포티한 포지션과 조작감이 끌린다','여유로운 자세와 움직임이 더 끌린다']
 };
-const MBTI_QUESTIONS=[
-  {a:'EI',t:'사람들과 시간을 보낸 뒤 에너지가 생기는 편이다.',r:false},
-  {a:'SN',t:'새로운 일을 시작할 때 구체적인 사실부터 살펴보는 편이다.',r:true},
-  {a:'TF',t:'의견이 갈리면 먼저 논리적인 근거를 확인하는 편이다.',r:false},
-  {a:'JP',t:'일정을 미리 정하고 진행하는 편이다.',r:false},
-  {a:'EI',t:'혼자 조용히 보내는 시간이 있어야 재충전된다.',r:true},
-  {a:'SN',t:'당장 보이는 사실보다 앞으로의 가능성을 먼저 상상한다.',r:false},
-  {a:'TF',t:'중요한 결정에서 상대의 감정을 먼저 살피는 편이다.',r:true},
-  {a:'JP',t:'계획이 바뀌어도 즉흥적으로 움직이는 편이 더 편하다.',r:true},
-  {a:'EI',t:'새로운 모임에서 먼저 대화를 시작하는 편이다.',r:false},
-  {a:'SN',t:'설명보다 전체적인 의미나 패턴을 먼저 파악하는 편이다.',r:false},
-  {a:'TF',t:'쉽지 않은 선택이라도 일관된 기준을 지키려 한다.',r:false},
-  {a:'JP',t:'일을 마무리할 때 정해진 순서가 있는 편이 좋다.',r:false}
-];
-/* v1.3.0 — Shared 16-item core; deep adds 24 items. MBTI-like questions are separate. */
+/* Core scoring items are intentionally unchanged from v1.7.0. */
 const CORE=QUESTIONS.slice(0,16);
 /* v1.5: 24 five-level agreement items (3 per preference dimension). Core 16 is unchanged. */
 const SCALE_LABELS=['매우 그렇다','그렇다','보통이다','그렇지 않다','전혀 그렇지 않다'];
@@ -108,31 +94,15 @@ const DEEP=[
   {kind:'scale',axis:'practicality',c:'우선순위',t:'내 취향에 맞는다면 유지·관리의 번거로움은 크게 신경 쓰지 않는다.',h:'옳고 그른 답은 없어요. 나에게 가까운 답을 골라 주세요.',reverse:true,needsExperience:false},
   {kind:'scale',axis:'sportiness',c:'우선순위',t:'스포티한 느낌보다 여유로운 이동이 더 끌린다.',h:'옳고 그른 답은 없어요. 나에게 가까운 답을 골라 주세요.',reverse:true,needsExperience:false}
 ];
-const DEEP_MBTI_EXTRA=[
- {a:'EI',t:'새로운 사람을 만나면 대화 속에서 생각이 더 잘 정리된다.',r:false},
- {a:'SN',t:'일을 이해할 때 구체적인 사례가 있어야 마음이 놓인다.',r:true},
- {a:'TF',t:'판단할 때 사람들의 관계를 보호하는 것이 중요하다.',r:true},
- {a:'JP',t:'마감이 정해져 있으면 미리 준비하는 편이다.',r:false},
- {a:'EI',t:'혼자 생각을 정리한 뒤 의견을 말하는 편이다.',r:true},
- {a:'SN',t:'새로운 아이디어의 가능성을 떠올리는 편이 즐겁다.',r:false},
- {a:'TF',t:'결정의 일관성과 논리적 기준을 중요하게 여긴다.',r:false},
- {a:'JP',t:'결정할 수 있어도 여러 가능성을 열어두고 싶다.',r:true},
- {a:'EI',t:'긴 시간 사람들과 어울린 뒤에는 혼자 쉬고 싶다.',r:true},
- {a:'SN',t:'새로운 지식을 배울 때 실제 활용 사례부터 확인한다.',r:true},
- {a:'TF',t:'말이 맞더라도 상대의 감정을 고려해 표현을 바꾼다.',r:true},
- {a:'JP',t:'미리 정해둔 계획을 완료하면 마음이 편해진다.',r:false}
-];
-// Same first 8 items for both modes, so an upgrade only asks unanswered items.
-const PERSONALITY_ITEMS=[...MBTI_QUESTIONS.slice(0,8),...MBTI_QUESTIONS.slice(8),...DEEP_MBTI_EXTRA.slice(0,8)];
-const MODE_CONFIG={quick:{label:'빠른 유형 찾기',length:16,mbti:8},deep:{label:'진지한 유형 찾기',length:40,mbti:20}};
+const MODE_CONFIG={quick:{label:'빠른 유형 찾기',length:16},deep:{label:'진지한 유형 찾기',length:40}};
 const STORE='ridedna-v1.5.0'; // New model: never interpret previous deep multiple-choice answers as scale answers.
 const LEGACY_STORE='ridedna-v1.3.0'; // Read-only migration of 16-item quick tests only.
 const DUO_SESSION='ridedna-duo-invite-v1';
 let duoInvite=null, savedOwn=null, cardFile=null, imageVersion=0;
-function blankState(){return {modelVersion:5,screen:'home',mode:null,answers:Array(40).fill(null),index:0,adaptive:[],adaptAnswers:[],adaptIndex:0,completed:false,personality:Array(20).fill(null),personalityIndex:0,estimated:null,estimateLength:0,mbtiManual:null,manualDraft:[null,null,null,null],shared:false,sharedData:null,experience:'unspecified'};}
+function blankState(){return {modelVersion:5,screen:'home',mode:null,answers:Array(40).fill(null),index:0,adaptive:[],adaptAnswers:[],adaptIndex:0,completed:false,shared:false,sharedData:null,experience:'unspecified'};}
 let state=blankState();
 const $=id=>document.getElementById(id);
-const screens=Object.fromEntries(['home','choose','quiz','result','mbti','manual','duo'].map(x=>[x,$(x+'-screen')]));
+const screens=Object.fromEntries(['home','choose','quiz','result','duo'].map(x=>[x,$(x+'-screen')]));
 let locked=false, timer=null, toastTimer=null;
 /* v1.6.0 — Motion is presentation only. No model/scoring values are modified. */
 const MOTION_KEY='ride-dna-motion-v1';
@@ -164,6 +134,74 @@ function updateProgressMotion(el){
 }
 const SVG_NS='http://www.w3.org/2000/svg';
 function svgElement(tag,attrs={}){const node=document.createElementNS(SVG_NS,tag);for(const [key,value] of Object.entries(attrs))node.setAttribute(key,String(value));return node;}
+/* v1.8.0 — Sixteen authored vector emblems. Only integer type IDs select a glyph. */
+const EMBLEM_GLYPHS=[
+ ['M96 190 L160 99 L224 190 M112 189 H208','M160 99 V220'],
+ ['M98 206 L98 133 L160 98 L222 133 L222 206','M124 204 L160 143 L196 204'],
+ ['M87 203 L160 97 L233 203 M110 204 H210','M160 96 L160 220'],
+ ['M106 217 L160 89 L214 217 M126 171 H194','M86 221 L234 221'],
+ ['M80 177 L160 112 L240 177 L160 240 Z','M119 177 H201'],
+ ['M107 112 L213 112 L237 191 L160 230 L83 191 Z','M111 166 L209 166'],
+ ['M82 213 L160 100 L238 213 M109 213 L160 151 L211 213','M90 237 H230'],
+ ['M93 106 L160 88 L227 106 L207 205 L160 241 L113 205 Z','M160 122 V209'],
+ ['M79 176 C117 95 206 95 241 176 L160 236 Z','M111 179 H208'],
+ ['M75 194 L160 97 L245 194 L160 224 Z','M160 97 V246'],
+ ['M92 202 L127 109 H193 L228 202','M107 221 L160 170 L213 221'],
+ ['M101 211 L101 130 L160 89 L219 130 L219 211','M125 194 L160 163 L195 194'],
+ ['M70 218 L134 109 L160 159 L186 109 L250 218','M89 231 H231'],
+ ['M87 214 L118 103 L160 144 L202 103 L233 214','M110 207 L160 236 L210 207'],
+ ['M74 181 L133 103 L160 134 L187 103 L246 181','M92 203 L160 151 L228 203'],
+ ['M90 106 L160 88 L230 106 L244 170 L160 241 L76 170 Z','M105 169 H215 M160 113 V212']
+];
+function emblemIndex(type){return Number.isInteger(type)&&type>=0&&type<EMBLEM_GLYPHS.length?type:0;}
+function drawEmblem(svg,type){
+ const i=emblemIndex(type),[primary,minor]=EMBLEM_GLYPHS[i];svg.replaceChildren();
+ const frame=svgElement('path',{d:'M160 20 L275 72 L270 221 L160 302 L50 221 L45 72 Z',fill:'none',stroke:'#8e5262','stroke-opacity':'.64','stroke-width':1.2});
+ const inner=svgElement('path',{d:'M160 39 L254 81 L249 210 L160 276 L71 210 L66 81 Z',fill:'rgba(227,63,83,.07)',stroke:'#f17f93','stroke-opacity':'.39','stroke-width':2});
+ svg.append(frame,inner);
+ for(let n=0;n<4;n++){const x=87+n*49;svg.append(svgElement('path',{d:`M${x} 57 l16 -7`,fill:'none',stroke:'#bc8793','stroke-opacity':'.5','stroke-width':1.2}));}
+ svg.append(svgElement('path',{d:primary,fill:'none',stroke:'#f1afba','stroke-width':11,'stroke-linejoin':'miter','stroke-linecap':'square',class:'emblem-glyph'}));
+ svg.append(svgElement('path',{d:minor,fill:'none',stroke:'#e45168','stroke-width':3.5,'stroke-linejoin':'miter','stroke-linecap':'square',class:'emblem-accent'}));
+ svg.append(svgElement('path',{d:'M33 125 V197 M287 125 V197',fill:'none',stroke:'#d96a7f','stroke-width':2,'stroke-opacity':'.68'}));
+ svg.append(svgElement('circle',{cx:160,cy:32,r:4,fill:'#f0b0b9'}));
+}
+function drawEmblemCanvas(ctx,type,x,y,size){
+ const i=emblemIndex(type),[primary,minor]=EMBLEM_GLYPHS[i];ctx.save();ctx.translate(x,y);ctx.scale(size/320,size/320);
+ ctx.fillStyle='rgba(226,57,83,.06)';ctx.strokeStyle='rgba(230,132,151,.42)';ctx.lineWidth=2.3;
+ const shield=new Path2D('M160 20 L275 72 L270 221 L160 302 L50 221 L45 72 Z');ctx.fill(shield);ctx.stroke(shield);
+ ctx.strokeStyle='#F1AFBA';ctx.lineWidth=11;ctx.lineJoin='miter';ctx.stroke(new Path2D(primary));ctx.strokeStyle='#E45168';ctx.lineWidth=3.5;ctx.stroke(new Path2D(minor));ctx.restore();
+}
+function openAtlas(){
+ const grid=$('atlas-grid');if(!grid.children.length){TYPES.forEach((t,i)=>{
+ const btn=document.createElement('button');btn.type='button';btn.className='atlas-tile';btn.dataset.type=String(i);
+ const svg=svgElement('svg',{viewBox:'0 0 320 320','aria-hidden':'true'});drawEmblem(svg,i);
+ const number=document.createElement('span');number.textContent='NO. '+String(i+1).padStart(2,'0');
+ const title=document.createElement('strong');title.textContent=t[0];btn.append(svg,number,title);
+ btn.addEventListener('click',()=>selectAtlas(i));grid.append(btn);
+ });}
+ selectAtlas(state.shared?state.sharedData.type:calculate().type);$('atlas-dialog').showModal();
+}
+function selectAtlas(type){
+ const i=emblemIndex(type);document.querySelectorAll('.atlas-tile').forEach(btn=>{
+ const selected=Number(btn.dataset.type)===i;btn.classList.toggle('is-selected',selected);btn.setAttribute('aria-pressed',String(selected));
+ });
+ drawEmblem($('atlas-emblem'),i);$('atlas-emblem').setAttribute('aria-label',TYPES[i][0]+' 엠블럼');
+ $('atlas-code').textContent='RIDER TYPE '+String(i+1).padStart(2,'0')+' / 16';
+ $('atlas-name').textContent=TYPES[i][0];$('atlas-english').textContent=TYPES[i][1];$('atlas-description').textContent=TYPES[i][2];
+}
+/* Pointer reaction is gated to a fine pointer; no device motion permission or perpetual RAF loop. */
+function initInteractiveHero(){
+ const el=$('hero-reactive');if(!el)return;
+ if(matchMedia('(hover:hover) and (pointer:fine)').matches){let pending=false,lastX=0,lastY=0;
+  el.addEventListener('pointermove',e=>{if(!motionEnabled())return;
+    const r=el.getBoundingClientRect();lastX=(e.clientX-r.left)/r.width-.5;lastY=(e.clientY-r.top)/r.height-.5;
+    if(!pending){pending=true;requestAnimationFrame(()=>{pending=false;el.style.setProperty('--ride-x',(lastX*19).toFixed(2)+'px');el.style.setProperty('--ride-y',(lastY*14).toFixed(2)+'px');});}
+  });
+  el.addEventListener('pointerleave',()=>{el.style.setProperty('--ride-x','0px');el.style.setProperty('--ride-y','0px');});
+ }
+ el.addEventListener('pointerdown',()=>{if(!motionEnabled())return;el.classList.remove('is-impacted');void el.offsetWidth;el.classList.add('is-impacted');});
+ el.addEventListener('animationend',()=>el.classList.remove('is-impacted'));
+}
 function signatureValues(axes){return K.map(k=>Math.max(0,Math.min(100,Number(axes?.[k])||0)));}
 function signaturePoints(axes){
  return signatureValues(axes).map((value,i)=>{
@@ -254,7 +292,7 @@ function launchReveal(){
  if(!motionEnabled())return;
  const result=calculate(),label=TYPES[result.type]?.[0]||'나의 라이더 유형';
  $('reveal-type').textContent=label;$('reveal-genre').textContent=result.genres[0]?.genre.name||'';
- drawSignature($('reveal-signature-svg'),result.axes);
+ drawEmblem($('reveal-signature-svg'),result.type);
  const overlay=$('reveal-overlay');overlay.hidden=false;revealActive=true;
  $('main').inert=true;$('header').inert=true;document.querySelector('footer').inert=true;
  $('reveal-skip').focus({preventScroll:true});
@@ -263,9 +301,8 @@ function launchReveal(){
 
 function qs(){return state.mode==='deep'?[...CORE,...DEEP]:CORE;}
 function answerTotal(){return MODE_CONFIG[state.mode]?.length||16;}
-function mbtiTotal(){return MODE_CONFIG[state.mode]?.mbti||8;}
 function isUnfinished(){return Boolean(state.mode&&!state.completed&&state.answers.slice(0,answerTotal()).some(v=>v!==null));}
-function persist(){if(state.shared)return;try{localStorage.setItem(STORE,JSON.stringify({...state,screen:['manual','mbti'].includes(state.screen)?'result':state.screen,shared:false,sharedData:null}));}catch{}}
+function persist(){if(state.shared)return;try{localStorage.setItem(STORE,JSON.stringify({...state,screen:state.screen,shared:false,sharedData:null}));}catch{}}
 function quickLegacyCopy(){
  try{
   if(localStorage.getItem(STORE))return;
@@ -278,10 +315,6 @@ function quickLegacyCopy(){
   x.completed=d.completed===true&&x.answers.slice(0,16).every(Number.isInteger);
   x.index=x.completed?16:Math.max(0,Math.min(15,Number.isInteger(d.index)?d.index:0));
   x.screen=x.completed?'result':'home';
-  if(Array.isArray(d.personality)&&d.personality.length===20&&d.personality.every(v=>v===null||(Number.isInteger(v)&&v>=-2&&v<=2)))x.personality=d.personality;
-  if(allowedMBTI(d.estimated))x.estimated=d.estimated;
-  if(allowedMBTI(d.mbtiManual)&&!d.mbtiManual.includes('?'))x.mbtiManual=d.mbtiManual;
-  x.estimateLength=[8,20].includes(d.estimateLength)?d.estimateLength:0;
   localStorage.setItem(STORE,JSON.stringify(x));
  }catch{}
 }
@@ -294,24 +327,18 @@ function restore(){
   if(!d||d.modelVersion!==5||!['quick','deep',null].includes(d.mode)||!Array.isArray(d.answers)||d.answers.length!==40||
     !d.answers.every((v,i)=>v===null||(Number.isInteger(v)&& (i<16?v>=0&&v<4:v>=UNKNOWN_ANSWER&&v<=4))))return;
   const x=blankState();
-  for(const key of ['screen','mode','index','adaptive','adaptAnswers','adaptIndex','completed','personality','personalityIndex','estimated','estimateLength','mbtiManual','manualDraft','experience']){
+  for(const key of ['screen','mode','index','adaptive','adaptAnswers','adaptIndex','completed','experience']){
    if(Object.prototype.hasOwnProperty.call(d,key))x[key]=d[key];
   }
   x.answers=d.answers; x.shared=false;x.sharedData=null;
-  if(!Array.isArray(x.personality)||x.personality.length!==20||!x.personality.every(v=>v===null||(Number.isInteger(v)&&v>=-2&&v<=2)))x.personality=Array(20).fill(null);
   if(!Array.isArray(x.adaptive))x.adaptive=[];
   x.adaptive=x.adaptive.slice(0,8).filter(q=>q&&K.includes(q.axis)).map(q=>({axis:q.axis,options:ADAPTIVE_AXES[q.axis]}));
   if(!Array.isArray(x.adaptAnswers))x.adaptAnswers=[];
   x.adaptAnswers=x.adaptAnswers.slice(0,x.adaptive.length).map(v=>[0,1,2].includes(v)?v:null);
   x.adaptIndex=Math.max(0,Math.min(x.adaptive.length?x.adaptive.length-1:0,Number.isInteger(x.adaptIndex)?x.adaptIndex:0));
   x.completed=x.completed===true;
-  x.estimated=allowedMBTI(x.estimated)?x.estimated:null;
-  x.mbtiManual=allowedMBTI(x.mbtiManual)&&!x.mbtiManual.includes('?')?x.mbtiManual:null;
-  x.estimateLength=[8,20].includes(x.estimateLength)?x.estimateLength:0;
-  if(!Array.isArray(x.manualDraft)||x.manualDraft.length!==4||!x.manualDraft.every((v,i)=>v===null||(['EI','SN','TF','JP'][i]||'').includes(v)))x.manualDraft=[null,null,null,null];
   x.index=Math.min(Math.max(Number.isInteger(x.index)?x.index:0,0),x.mode==='deep'?40:16);
-  x.personalityIndex=Math.max(0,Math.min(19,Number.isInteger(x.personalityIndex)?x.personalityIndex:0));
-  if(!screens[x.screen]||['manual','mbti','duo'].includes(x.screen))x.screen='home';
+  if(!screens[x.screen]||['duo','mbti','manual'].includes(x.screen))x.screen='home';
   if(x.screen==='result'&&!x.completed)x.screen='home';
   if(x.screen==='quiz'&&x.completed)x.screen='result';
   state=x;
@@ -319,12 +346,12 @@ function restore(){
 }
 function answerTotalFor(mode){return MODE_CONFIG[mode]?.length||16;}
 function toast(message){const el=$('toast');el.textContent=message;el.hidden=false;clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.hidden=true,3200);}
-function urlState(){return {rideDna:true,screen:state.screen,mode:state.mode,index:state.index,adaptIndex:state.adaptIndex,personalityIndex:state.personalityIndex};}
+function urlState(){return {rideDna:true,screen:state.screen,mode:state.mode,index:state.index,adaptIndex:state.adaptIndex};}
 function show(name,{nav='push',focus=true}={}){
  if(!screens[name])name='home';dismissReveal({focus:false});clearTimeout(timer);locked=false;state.screen=name;
  document.body.dataset.view=name;for(const [key,s] of Object.entries(screens))s.hidden=key!==name;
  $('hero-reset').hidden=!isUnfinished();$('hero-cta-label').textContent='내 라이더 유형 찾기';
- if(name==='choose')renderChoose();if(name==='quiz'){renderQuiz();questionEnter();}if(name==='result')renderResult();if(name==='mbti')renderMbti();if(name==='manual')renderManual();if(name==='duo')renderDuo();
+ if(name==='choose')renderChoose();if(name==='quiz'){renderQuiz();questionEnter();}if(name==='result')renderResult();if(name==='duo')renderDuo();
  if(motionEnabled()&&name!=='quiz'){const screen=screens[name];screen.classList.remove('motion-scene-enter');requestAnimationFrame(()=>{if(state.screen===name)screen.classList.add('motion-scene-enter');});}
  window.scrollTo({top:0,behavior:'instant'});persist();
  if(nav!=='silent'){const route=urlState();if(nav==='replace')history.replaceState(route,'');else if(!history.state?.rideDna||Object.entries(route).some(([k,v])=>history.state?.[k]!==v))history.pushState(route,'');}
@@ -335,8 +362,8 @@ function renderChoose(){
 }
 function newTest(mode){state=blankState();state.mode=mode;history.replaceState({rideDna:true,screen:'choose',mode:null,index:0},'',location.pathname);show('quiz');}
 function chooseMode(mode){if(isUnfinished()&&state.mode===mode){show('quiz');return;}if(state.completed&&state.mode===mode){newTest(mode);return;}newTest(mode);}
-function upgrade(){if(state.shared)return;const old=state.answers.slice(0,16);const manual=state.mbtiManual;const personality=state.personality.slice();const estimate=state.estimated;const estimateLength=state.estimateLength;
- state=blankState();state.mode='deep';state.index=16;state.answers.splice(0,16,...old);state.personality=personality;state.estimated=estimate;state.estimateLength=estimateLength;state.mbtiManual=manual;show('quiz');}
+function upgrade(){if(state.shared)return;const old=state.answers.slice(0,16);
+ state=blankState();state.mode='deep';state.index=16;state.answers.splice(0,16,...old);show('quiz');}
 function quit(){if($('exit-dialog').showModal)$('exit-dialog').showModal();else if(confirm('나가도 답변은 이 기기에 보관됩니다. 나갈까요?'))show('home');}
 function currentQuizQuestion(){return state.mode==='deep'&&state.index>=40?state.adaptive[state.adaptIndex]:qs()[state.index];}
 function renderQuiz(){
@@ -417,7 +444,7 @@ function calculate(){const {axes,solo,unrated}=axesFrom();const weights={city:1.
 function finish(){state.index=answerTotal();state.completed=true;show('result');launchReveal();}
 function htmlText(el,txt){el.textContent=txt;}
 function renderResult(){const share=state.shared&&state.sharedData;const result=share?share:calculate();const t=TYPES[result.type]||TYPES[0],picks=share?result.genres.map(x=>({genre:GENRES.find(g=>g.id===x.id),score:null})):result.genres;
- $('result-title').textContent=t[0];$('result-english').textContent=t[1];$('result-serial').textContent='TYPE '+String(result.type+1).padStart(2,'0')+' / 16';
+ drawEmblem($('result-emblem'),result.type);$('result-title').textContent=t[0];$('result-english').textContent=t[1];$('result-serial').textContent='TYPE '+String(result.type+1).padStart(2,'0')+' / 16';
  $('result-description').textContent=t[2];$('result-best-genre').textContent=picks[0]?.genre?.name||'—';$('result-next-genre').textContent=picks[1]?.genre?.name||'—';
  $('result-mode').textContent=share?(share.mode==='deep'?'심화 결과 공유':'빠른 결과 공유'):state.mode==='deep'?'진지한 유형 찾기 결과':'빠른 유형 찾기 결과';
  spotlightPicks=picks.slice(0,2);showSpotlight(0);$('signature-inspect').setAttribute('aria-expanded','false');$('signature-axis-list').hidden=true;renderSignatureDetails(result,Boolean(share));
@@ -436,41 +463,14 @@ function renderResult(){const share=state.shared&&state.sharedData;const result=
  drawSignature($('dna-signature-svg'),displayAxesForResult(result));
  document.querySelector('.signature-footnote').textContent=share?'공유된 장르 요약으로 만든 패턴 · 세부 점수 제외':'나의 여덟 가지 라이딩 취향';
  $('dna-signature-svg').setAttribute('aria-label',share?'공유된 추천 장르를 바탕으로 만든 장식 패턴':'8가지 라이딩 취향 지표에 따라 만들어진 도형');
- renderPersonalitySummary(share);$('share-feedback').textContent='';
+ $('share-feedback').textContent='';
 }
-function mbtiParts(){return [['EI','E','I'],['SN','N','S'],['TF','T','F'],['JP','J','P']];}
-function estimateMbti(length){const sum={EI:0,SN:0,TF:0,JP:0};for(let i=0;i<length;i++){const q=PERSONALITY_ITEMS[i];if(state.personality[i]!==null)sum[q.a]+=state.personality[i]*(q.r?-1:1);}const threshold=length===8?2:3;const type=mbtiParts().map(([k,a,b])=>sum[k]>=threshold?a:sum[k]<=-threshold?b:'?').join('');return {type,sum,threshold};}
-function renderPersonalitySummary(shared){const estimated=shared?shared.estimated:state.estimated,manual=shared?shared.self:state.mbtiManual,container=$('mbti-summary');container.replaceChildren();
- const block=(tag,value,sub)=>{const row=document.createElement('div');row.className='mbti-summary-row';const k=document.createElement('span');k.textContent=tag;const val=document.createElement('strong');val.textContent=value||'—';const caption=document.createElement('small');caption.textContent=sub;row.append(k,val,caption);container.append(row);};
- block('예상 MBTI',estimated||'미측정',estimated?(shared?'비공식 추정 결과':`${state.estimateLength||8}문항 독자 문항으로 추정한 참고용 결과`):'별도 성격 질문을 완료하면 표시됩니다.');
- if(manual)block('내가 입력한 MBTI',manual,'본인 입력값 · 공식 검증 아님');
- const compare=$('mbti-comparison');compare.hidden=!(estimated&&manual);if(estimated&&manual){const matching=Array.from(estimated).filter((s,i)=>s!=='?'&&s===manual[i]).length;const known=Array.from(estimated).filter(x=>x!=='?').length;compare.textContent=`확인 가능한 ${known}개 성격 축 중 ${matching}개가 입력한 유형과 일치했어요. 이는 성격 검사의 정확도 수치가 아니에요.`;}
- $('mbti-actions').hidden=Boolean(shared);$('mbti-start-label').textContent=state.mode==='deep'?'예상 MBTI 검사 · 20문항':'예상 MBTI 검사 · 8문항';
- if(!shared&&state.estimateLength===8&&state.mode==='deep')$('mbti-start-label').textContent='예상 MBTI 심화 · 추가 12문항';
-}
-function revealPersonality(){
- const card=$('mbti-card');card.classList.remove('mbti-revealing');
- requestAnimationFrame(()=>{if(state.screen!=='result')return;
-  card.scrollIntoView({block:'start',behavior:'instant'});
-  if(motionEnabled())card.classList.add('mbti-revealing');
-  $('mbti-title').focus({preventScroll:true});
- });
-}
-function renderMbti(){const total=mbtiTotal(),at=state.personalityIndex,question=PERSONALITY_ITEMS[at];if(!question){show('result');return;}
- $('mbti-progress-label').textContent=String(at+1).padStart(2,'0')+' / '+total;$('mbti-question').textContent=question.t;
- updateProgressMotion($('mbti-progress-track'));
- const percent=Math.round(at/total*100);$('mbti-progress-fill').style.width=percent+'%';$('mbti-progress-track').setAttribute('aria-valuenow',String(percent));
- const list=$('mbti-choices');list.replaceChildren();['전혀 아니다','아니다','보통이다','그렇다','매우 그렇다'].forEach((txt,i)=>{const b=document.createElement('button');b.type='button';b.className='likert-option';b.textContent=txt;b.classList.toggle('chosen',state.personality[at]===i-2);b.setAttribute('aria-pressed',String(state.personality[at]===i-2));b.addEventListener('click',()=>{state.personality[at]=i-2;if(at===total-1){const r=estimateMbti(total);state.estimated=r.type;state.estimateLength=total;show('result',{focus:false});revealPersonality();toast('예상 성격 유형을 추가했어요.');}else{state.personalityIndex++;show('mbti',{focus:false});}});list.append(b);});$('mbti-prev').disabled=at===0;
-}
-function renderManual(){const wrap=$('manual-pairs');wrap.replaceChildren();const labels=[['에너지 방향','E','I'],['정보 선호','S','N'],['판단 선호','T','F'],['생활 방식','J','P']];labels.forEach(([tag,a,b],index)=>{const row=document.createElement('div');row.className='manual-pair';const label=document.createElement('span');label.textContent=tag;row.append(label);[a,b].forEach(letter=>{const btn=document.createElement('button');btn.type='button';btn.textContent=letter;btn.classList.toggle('selected',state.manualDraft[index]===letter);btn.setAttribute('aria-pressed',String(state.manualDraft[index]===letter));btn.addEventListener('click',()=>{state.manualDraft[index]=letter;renderManual();persist();});row.append(btn);});wrap.append(row);});}
-function manualSave(){if(state.manualDraft.some(x=>!x)){toast('4개 항목을 모두 골라 주세요.');return;}state.mbtiManual=state.manualDraft.join('');show('result');toast('입력한 MBTI를 별도로 표시했어요.');}
-function shareData(){if(state.shared)return state.sharedData;const r=calculate();return {type:r.type,mode:state.mode,genres:r.genres.slice(0,2).map(x=>({id:x.genre.id})),estimated:state.estimated,self:state.mbtiManual};}
-function allowedMBTI(s){return typeof s==='string'&&s.length===4&&['EI','SN','TF','JP'].every((p,i)=>p.includes(s[i])||s[i]==='?');}
+function shareData(){if(state.shared)return state.sharedData;const r=calculate();return {type:r.type,mode:state.mode,genres:r.genres.slice(0,2).map(x=>({id:x.genre.id}))};}
 function cleanSummary(d){
  if(!d||!Number.isInteger(d.type)||d.type<0||d.type>=TYPES.length||!['quick','deep'].includes(d.mode)||!Array.isArray(d.genres)||d.genres.length!==2)return null;
  const ids=d.genres.map(g=>g&&g.id);
  if(new Set(ids).size!==2||!ids.every(id=>GENRES.some(x=>x.id===id)))return null;
- return {type:d.type,mode:d.mode,genres:ids.map(id=>({id})),estimated:allowedMBTI(d.estimated)?d.estimated:null,self:allowedMBTI(d.self)&&!d.self.includes('?')?d.self:null};
+ return {type:d.type,mode:d.mode,genres:ids.map(id=>({id}))};
 }
 function parseShared(){
  if(location.search.length>600)return false;
@@ -491,14 +491,15 @@ function baseShareUrl(d,opts={}){
  u.searchParams.set('r',String(safe.type));
  u.searchParams.set('g',safe.genres.map(g=>g.id).join(','));
  if(safe.mode==='deep')u.searchParams.set('d','1');
- if(opts.mbti){if(safe.estimated)u.searchParams.set('e',safe.estimated);if(safe.self)u.searchParams.set('s',safe.self);}
+ // Legacy e/s parameters are accepted on incoming URLs but are never re-shared.
+
  if(opts.duo)u.searchParams.set('duo','1');
  return u.href;
 }
-function getShareOptions(){return {mbti:$('share-mbti').checked,duo:$('share-duo').checked};}
+function getShareOptions(){return {duo:$('share-duo').checked};}
 function shareLink(){return baseShareUrl(shareData(),getShareOptions());}
 function displayShareOptions(){const d=cleanSummary(shareData());$('share-summary-type').textContent=TYPES[d.type][0];$('share-summary-genre').textContent=d.genres.map(g=>GENRES.find(x=>x.id===g.id)?.name).join(' · ');}
-function openShare(invite=false){displayShareOptions();$('share-kakao').hidden=!kakaoConfigKey();$('kakao-unconfigured').hidden=Boolean(kakaoConfigKey());$('share-mbti').checked=false;$('share-duo').checked=invite;$('share-dialog-feedback').textContent='';$('share-dialog').showModal();}
+function openShare(invite=false){displayShareOptions();$('share-kakao').hidden=!kakaoConfigKey();$('kakao-unconfigured').hidden=Boolean(kakaoConfigKey());$('share-duo').checked=invite;$('share-dialog-feedback').textContent='';$('share-dialog').showModal();}
 async function nativeShare(){const url=shareLink();if(!navigator.share){await copyShare();return;}
  try{await navigator.share({title:'RIDE DNA — 나의 라이더 유형',text:`${TYPES[shareData().type][0]} · 내 라이딩 취향`,url});$('share-dialog-feedback').textContent='공유 메뉴에서 전송을 선택했어요.';}
  catch(e){if(e?.name!=='AbortError')await copyShare();}
@@ -524,7 +525,7 @@ function kakaoShare(){
   if(!Kakao.isInitialized())Kakao.init(k);
   const d=cleanSummary(shareData()),url=shareLink();
   const first=GENRES.find(g=>g.id===d.genres[0].id)?.name;
-  Kakao.Share.sendDefault({objectType:'feed',content:{title:`${TYPES[d.type][0]} · RIDE DNA`,description:`어울리는 바이크: ${first}${getShareOptions().mbti&&d.estimated?' · 예상 '+d.estimated:''}`,imageUrl:new URL('assets/social-preview.jpg',location.href).href,link:{mobileWebUrl:url,webUrl:url}},buttons:[{title:getShareOptions().duo?'친구와 비교하기':'라이더 결과 보기',link:{mobileWebUrl:url,webUrl:url}}]});
+  Kakao.Share.sendDefault({objectType:'feed',content:{title:`${TYPES[d.type][0]} · RIDE DNA`,description:`어울리는 바이크: ${first}`,imageUrl:new URL('assets/social-preview.jpg',location.href).href,link:{mobileWebUrl:url,webUrl:url}},buttons:[{title:getShareOptions().duo?'친구와 비교하기':'라이더 결과 보기',link:{mobileWebUrl:url,webUrl:url}}]});
   $('share-dialog-feedback').textContent='카카오톡에서 대화 상대를 선택해 주세요.';
  }catch(e){$('share-dialog-feedback').textContent='카카오 설정 또는 도메인을 확인해 주세요. 링크 복사도 사용할 수 있어요.';}
 }
@@ -548,73 +549,106 @@ function renderDuo(){
  $('duo-match-description').textContent=same.length?'추천 장르에 공통점이 있어요. 서로 어떤 부분을 좋아하는지 이야기해 보세요.':'추천받은 상위 장르가 달라요. 이동 목적과 원하는 조작감을 비교해 보는 것도 재미있겠어요.';
  const tags=$('duo-common');tags.replaceChildren();[...new Set([...names(own),...names(f)])].forEach(name=>{const b=document.createElement('span');b.textContent=name;tags.append(b);});
 }
-function canvasWrap(ctx,str,x,y,maxWidth,font,lineHeight,linesMax=3){
- ctx.font=font;const lines=[];let acc='';for(const c of Array.from(str)){if(acc&&ctx.measureText(acc+c).width>maxWidth){lines.push(acc);acc=c;}else acc+=c;}if(acc)lines.push(acc);
- lines.slice(0,linesMax).forEach((line,i)=>ctx.fillText(line,x,y+i*lineHeight));return Math.min(lines.length,linesMax);
-}
+/* v1.9 — Card renderer is isolated in card-renderer.js, independent of quiz scoring. */
 const IMAGE_SIZES={feed:[1080,1350],story:[1080,1920],square:[1080,1080]};
-function createCard(){
- const theme=document.querySelector('input[name="studio-theme"]:checked')?.value||'noir';
- const choice=document.querySelector('input[name="studio-size"]:checked')?.value||'feed';
- const [w,h]=IMAGE_SIZES[choice]||IMAGE_SIZES.feed,c=$('studio-canvas'),ctx=c.getContext('2d');if(!ctx)return;
- c.width=w;c.height=h;const d=cleanSummary(shareData()),first=GENRES.find(x=>x.id===d.genres[0].id),second=GENRES.find(x=>x.id===d.genres[1].id);
- // 고정된 로컬 데이터만 캔버스에 그립니다. URL 문자열이나 사용자 HTML 삽입 없음.
- ctx.fillStyle='#101116';ctx.fillRect(0,0,w,h);
- const grd=ctx.createLinearGradient(0,0,w,h);grd.addColorStop(0,'#191921');grd.addColorStop(1,'#101116');ctx.fillStyle=grd;ctx.fillRect(0,0,w,h);
- if(theme==='velocity'){
-  const v=ctx.createLinearGradient(w,0,0,h);v.addColorStop(0,'#7b192d');v.addColorStop(.58,'#1c141e');v.addColorStop(1,'#0b1017');ctx.fillStyle=v;ctx.fillRect(0,0,w,h);
-  ctx.save();ctx.beginPath();ctx.rect(0,0,w,h);ctx.clip();
-  for(let i=0;i<14;i++){ctx.beginPath();ctx.moveTo(450+i*67,-80);ctx.lineTo(-390+i*89,h+150);ctx.strokeStyle=`rgba(243,95,113,${i%3===0?.20:.055})`;ctx.lineWidth=i%3===0?16:2;ctx.stroke();}
-  ctx.restore();
- }else if(theme==='signature'){
-  ctx.fillStyle='#11131d';ctx.fillRect(0,0,w,h);
-  ctx.save();ctx.translate(w*.53,h*.32);const radius=Math.min(w,h)*.35;
-  for(let i=0;i<26;i++){ctx.beginPath();ctx.arc(0,0,radius-i*12,0,Math.PI*2);ctx.strokeStyle=`rgba(213,70,91,${i%5===0?.16:.045})`;ctx.lineWidth=i%5===0?3:1;ctx.stroke();}
-  ctx.restore();
- }
- ctx.fillStyle=theme==='signature'?'#ec8c9a':'#DB4354';ctx.fillRect(0,0,13,h);ctx.fillRect(76,105,w-152,5);
- // Share card uses the same eight-axis static signature as the animated on-page pattern.
- const sigAxes=state.shared?displayAxesForResult(d):calculate().axes;
- const sigPts=signaturePoints(sigAxes);ctx.save();ctx.translate(theme==='signature'?w-220:w-168,theme==='signature'?h*.28:205);ctx.scale(theme==='signature'?1.18:.70,theme==='signature'?1.18:.70);ctx.translate(-110,-110);
- ctx.strokeStyle='rgba(210,185,193,.18)';ctx.lineWidth=1.5;[44,76,103].forEach(r=>{ctx.beginPath();ctx.arc(110,110,r,0,Math.PI*2);ctx.stroke();});
- ctx.beginPath();sigPts.forEach(([x,y],i)=>i===0?ctx.moveTo(x,y):ctx.lineTo(x,y));ctx.closePath();ctx.fillStyle='rgba(210,59,75,.20)';ctx.fill();ctx.strokeStyle='#ed7482';ctx.lineWidth=3;ctx.stroke();
- sigPts.forEach(([x,y])=>{ctx.beginPath();ctx.arc(x,y,3.8,0,Math.PI*2);ctx.fillStyle='#f1a3ac';ctx.fill();});ctx.restore();
- const txt=(str,x,y,font,color)=>{ctx.fillStyle=color;ctx.font=font;ctx.fillText(str,x,y);};
- txt('RIDE DNA',76,192,'800 66px system-ui, sans-serif','#F4F2F1');
- txt(theme==='velocity'?'VELOCITY EDITION':theme==='signature'?'DNA SIGNATURE EDITION':d.mode==='deep'?'DEEP RIDER REPORT':'RIDER ID CARD',76,247,'600 24px system-ui, sans-serif','#B9AFB6');
- const square=h===1080,top=square?300:h===1350?405:560,titleSize=square?64:82,lh=square?79:107;
- txt('MY RIDER TYPE',76,top,'700 27px system-ui, sans-serif','#DF7F8B');
- ctx.fillStyle='#F9F6F4';const count=canvasWrap(ctx,TYPES[d.type][0],76,top+100,w-152,`750 ${titleSize}px system-ui, sans-serif`,lh,3);
- const englishY=top+100+count*lh+32;
- txt(TYPES[d.type][1],76,englishY,'560 27px system-ui, sans-serif','#C7BFC5');
- const separator=square?640:h===1350?870:1120;
- ctx.fillStyle='#454149';ctx.fillRect(76,separator,w-152,2);
- txt('MOTORCYCLE MATCH',76,separator+66,'700 25px system-ui, sans-serif','#C4BAC0');
- ctx.fillStyle='#FFFFFF';canvasWrap(ctx,first?.name||'—',76,separator+139,w-152,`720 ${square?42:51}px system-ui, sans-serif`,63,2);
- txt(`2ND PICK   ${second?.name||'—'}`,76,separator+198,'550 28px system-ui, sans-serif','#CDC4C8');
- if($('studio-mbti').checked&&(d.estimated||d.self))txt(`MBTI   ${d.self||d.estimated}${d.self?' · 직접 입력':' · 비공식 예상'}`,76,separator+263,'600 26px system-ui, sans-serif','#F09BA6');
- ctx.fillStyle='#514C53';ctx.fillRect(76,h-130,w-152,2);
- txt('RIDE DNA  /  EST. 2026',76,h-68,'500 23px system-ui, sans-serif','#ADA5AC');
- cardFile=null;const version=++imageVersion;
- c.toBlob(blob=>{if(blob&&version===imageVersion)cardFile=new File([blob],`RIDE_DNA_${choice.toUpperCase()}.png`,{type:'image/png'});},'image/png');
+let studioFace='front',studioFlipTimer=null,cardImagePromise=null;
+function flipStudio(){
+ if(studioFlipTimer)return;
+ const frame=$('studio-flip-frame');if(motionEnabled())frame.classList.add('is-flipping');
+ const update=()=>{studioFace=studioFace==='front'?'back':'front';$('studio-face-text').textContent=studioFace==='front'?'앞면':'뒷면';$('studio-flip').setAttribute('aria-label',studioFace==='front'?'카드 뒷면 보기':'카드 앞면 보기');createCard();};
+ if(!motionEnabled()){update();return;}
+ studioFlipTimer=setTimeout(()=>{update();studioFlipTimer=setTimeout(()=>{frame.classList.remove('is-flipping');studioFlipTimer=null;},200);},165);
 }
-function openStudio(){if($('share-dialog').open)$('share-dialog').close();$('studio-feedback').textContent='';$('studio-mbti').checked=false;document.querySelector('input[value="feed"][name="studio-size"]').checked=true;document.querySelector('input[value="noir"][name="studio-theme"]').checked=true;$('studio-dialog').showModal();createCard();}
-function downloadCard(){const c=$('studio-canvas');try{const a=document.createElement('a');a.download=`RIDE_DNA_${(document.querySelector('input[name="studio-size"]:checked')?.value||'feed').toUpperCase()}.png`;a.href=c.toDataURL('image/png');document.body.append(a);a.click();a.remove();$('studio-feedback').textContent='PNG 저장을 요청했어요.';}catch{$('studio-feedback').textContent='저장할 수 없어요. 브라우저의 공유 기능을 이용해 주세요.';}}
-async function sendCard(){if(!cardFile){$('studio-feedback').textContent='이미지를 준비하는 중이에요. 잠시 뒤 다시 눌러 주세요.';return;}
- if(!navigator.share||!navigator.canShare?.({files:[cardFile]})){$('studio-feedback').textContent='이 브라우저는 이미지 공유를 지원하지 않아요. PNG 저장을 이용해 주세요.';return;}
- try{await navigator.share({files:[cardFile],title:'RIDE DNA · 라이더 카드'});$('studio-feedback').textContent='공유 메뉴를 열었어요.';}catch(e){if(e.name!=='AbortError')$('studio-feedback').textContent='공유할 수 없어요. PNG 저장을 이용해 주세요.';}
+function createCard(){
+ const theme=document.querySelector('input[name="studio-theme"]:checked')?.value||'velocity';
+ const choice=document.querySelector('input[name="studio-size"]:checked')?.value||'feed';
+ const [w,h]=IMAGE_SIZES[choice]||IMAGE_SIZES.feed,c=$('studio-canvas');
+ const d=cleanSummary(shareData());
+ const genres=d.genres.map(x=>GENRES.find(g=>g.id===x.id));
+ // Do not replace absent shared-response axes with estimated numbers: no synthetic analysis in exports.
+ const axes=state.shared?null:calculate().axes;
+ const options={h,theme,face:studioFace,type:d.type,name:TYPES[d.type][0],english:TYPES[d.type][1],
+  glyph:EMBLEM_GLYPHS[d.type],first:genres[0]?.name||'—',second:genres[1]?.name||'—',mode:d.mode,axes};
+ try{
+  RideCardRenderer.draw(c,options);
+  $('studio-canvas').setAttribute('aria-label',`${options.name}, ${theme==='velocity'?'벨로시티':theme==='signature'?'DNA 포지':'느와르 프리미엄'} 디자인, ${studioFace==='front'?'앞면':'뒷면'} 라이더 카드`);
+  $('studio-edition-description').textContent=theme==='velocity'?'VELOCITY · 레이싱 그래픽과 강렬한 대형 엠블럼':theme==='signature'?'DNA FORGE · 라이딩 성향에 반응하는 데이터 그래픽':'NOIR PREMIUM · 메탈릭 질감과 절제된 프리미엄 디자인';
+  $('studio-feedback').textContent='';
+ }catch(e){console.error('Card rendering failed',e);$('studio-feedback').textContent='카드를 그릴 수 없어요. 페이지를 새로고침해 주세요.';}
+ cardFile=null;cardImagePromise=null;imageVersion++;
+}
+function prepareCardFile(){
+ if(cardFile)return Promise.resolve(cardFile);
+ if(cardImagePromise)return cardImagePromise;
+ const version=imageVersion,c=$('studio-canvas');
+ const work=new Promise((resolve,reject)=>{
+  try{c.toBlob(blob=>{
+   if(version!==imageVersion){reject(new Error('Card changed during encoding'));return;}
+   if(!blob){reject(new Error('Canvas encoding unavailable'));return;}
+   const choice=document.querySelector('input[name="studio-size"]:checked')?.value||'feed';
+   cardFile=new File([blob],`RIDE_DNA_${choice.toUpperCase()}_${studioFace.toUpperCase()}.png`,{type:'image/png'});
+   resolve(cardFile);
+  },'image/png');}catch(e){reject(e);}
+ });
+ const tracked=work.finally(()=>{if(cardImagePromise===tracked)cardImagePromise=null;});
+ cardImagePromise=tracked;return tracked;
+}
+function openStudio(){
+ if($('share-dialog').open)$('share-dialog').close();
+ $('studio-feedback').textContent='';
+ document.querySelector('input[value="feed"][name="studio-size"]').checked=true;
+ document.querySelector('input[value="velocity"][name="studio-theme"]').checked=true;
+ studioFace='front';$('studio-face-text').textContent='앞면';$('studio-flip-frame').classList.remove('is-flipping');
+ $('studio-dialog').showModal();createCard();
+}
+async function downloadCard(){
+ try{
+  const blob=await prepareCardFile(),url=URL.createObjectURL(blob),a=document.createElement('a');
+  a.download=blob.name;a.href=url;document.body.append(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),15000);
+  $('studio-feedback').textContent='고화질 PNG 저장을 요청했어요.';
+ }catch(e){$('studio-feedback').textContent='이미지를 저장할 수 없어요. 다시 시도해 주세요.';}
+}
+async function sendCard(){
+ try{
+  if(!navigator.share){$('studio-feedback').textContent='이 브라우저에서는 PNG 저장을 이용해 주세요.';return;}
+  const file=await prepareCardFile();
+  if(!navigator.canShare?.({files:[file]})){$('studio-feedback').textContent='이 브라우저는 이미지 공유를 지원하지 않아요. PNG 저장을 이용해 주세요.';return;}
+  await navigator.share({files:[file],title:'RIDE DNA · 라이더 카드'});
+  $('studio-feedback').textContent='공유 메뉴를 열었어요.';
+ }catch(e){if(e.name!=='AbortError')$('studio-feedback').textContent='공유할 수 없어요. PNG 저장을 이용해 주세요.';}
+}
+function initCardTilt(){
+ const frame=$('studio-flip-frame');if(!frame)return;
+ const reset=()=>{frame.style.setProperty('--tilt-x','0deg');frame.style.setProperty('--tilt-y','0deg');frame.style.setProperty('--glint-x','50%');frame.style.setProperty('--glint-y','50%');};
+ const apply=e=>{
+  if(!motionEnabled()||studioFlipTimer||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  if(e.pointerType==='touch'&&e.buttons!==1)return;
+  const b=frame.getBoundingClientRect();if(!b.width||!b.height)return;
+  const x=Math.max(0,Math.min(1,(e.clientX-b.left)/b.width)),y=Math.max(0,Math.min(1,(e.clientY-b.top)/b.height));
+  frame.style.setProperty('--tilt-x',((.5-y)*7).toFixed(2)+'deg');
+  frame.style.setProperty('--tilt-y',((x-.5)*7).toFixed(2)+'deg');
+  frame.style.setProperty('--glint-x',(x*100).toFixed(0)+'%');frame.style.setProperty('--glint-y',(y*100).toFixed(0)+'%');
+ };
+ let pending=false,last=null;
+ frame.addEventListener('pointermove',e=>{last=e;if(!pending){pending=true;requestAnimationFrame(()=>{pending=false;if(last)apply(last);});}});
+ frame.addEventListener('pointerleave',reset);
+ frame.addEventListener('pointerup',e=>{if(e.pointerType==='touch')setTimeout(reset,250);});
+ $('studio-dialog').addEventListener('close',reset);
 }
 function action(name){if(name==='home'){state.shared=false;state.sharedData=null;history.replaceState({rideDna:true,screen:'home'},'',location.pathname);show('home');return;}
  if(name==='choose'){show('choose');return;}if(name==='duo'){openDuo();return;}if(name==='quick'||name==='deep'){chooseMode(name);return;}
  if(name==='resume'){show('quiz');return;}if(name==='restart'){state.shared=false;state.sharedData=null;state=blankState();history.replaceState({rideDna:true,screen:'choose'},'',location.pathname);show('choose');return;}
  if(name==='upgrade'){upgrade();return;}if(name==='result'){show('result');return;}
- if(name==='mbti-test'){if(state.estimateLength===8&&state.mode==='deep'&&state.personality.slice(0,8).every(v=>v!==null)){state.personalityIndex=8;}else{state.personalityIndex=0;state.personality=Array(20).fill(null);}show('mbti');return;}
- if(name==='mbti-manual'){state.manualDraft=state.mbtiManual?state.mbtiManual.split(''):[null,null,null,null];show('manual');return;}}
+}
 setMotionMode(readMotionMode(),{save:false});
+initInteractiveHero();
 $('motion-settings-button').addEventListener('click',openMotionSettings);
 $('motion-close').addEventListener('click',()=>$('motion-dialog').close());
 document.querySelectorAll('input[name="motion-mode"]').forEach(x=>x.addEventListener('change',()=>setMotionMode(x.value)));
 $('spotlight-prev').addEventListener('click',()=>showSpotlight(0));$('spotlight-next').addEventListener('click',()=>showSpotlight(1));
+$('atlas-entry').addEventListener('click',openAtlas);
+$('atlas-dialog').addEventListener('click',e=>{if(e.target===$('atlas-dialog'))$('atlas-dialog').close();});
 $('signature-inspect').addEventListener('click',()=>{const list=$('signature-axis-list');list.hidden=!list.hidden;$('signature-inspect').setAttribute('aria-expanded',String(!list.hidden));});
 $('reveal-skip').addEventListener('click',()=>dismissReveal());
 $('reveal-overlay').addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();dismissReveal();}});
@@ -622,18 +656,17 @@ $('motion-dialog').addEventListener('click',e=>{if(e.target===$('motion-dialog')
 document.querySelectorAll('[data-action]').forEach(b=>b.addEventListener('click',()=>action(b.dataset.action)));
 $('quiz-exit').addEventListener('click',quit);$('quiz-prev').addEventListener('click',prev);
 $('exit-cancel').addEventListener('click',()=>$('exit-dialog').close());$('exit-confirm').addEventListener('click',()=>{$('exit-dialog').close();show('home');});
-$('mbti-prev').addEventListener('click',()=>{state.personalityIndex=Math.max(0,state.personalityIndex-1);show('mbti');});
-$('manual-save').addEventListener('click',manualSave);
 $('share-button').addEventListener('click',()=>openShare(false));$('image-button').addEventListener('click',openStudio);
 $('duo-button').addEventListener('click',openDuo);$('duo-share-button').addEventListener('click',()=>openShare(true));
 $('share-kakao').addEventListener('click',kakaoShare);$('share-native').addEventListener('click',nativeShare);$('share-copy').addEventListener('click',copyShare);
-$('share-open-studio').addEventListener('click',openStudio);$('studio-download').addEventListener('click',downloadCard);$('studio-native').addEventListener('click',sendCard);
-document.querySelectorAll('input[name="studio-size"],input[name="studio-theme"],#studio-mbti').forEach(x=>x.addEventListener('change',createCard));
+$('share-open-studio').addEventListener('click',openStudio);$('studio-download').addEventListener('click',downloadCard);$('studio-flip').addEventListener('click',flipStudio);$('studio-native').addEventListener('click',sendCard);
+document.querySelectorAll('input[name="studio-size"],input[name="studio-theme"]').forEach(x=>x.addEventListener('change',createCard));
+initCardTilt();
 document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',()=>$(b.dataset.close)?.close()));
 ['share-dialog','studio-dialog'].forEach(id=>$(id).addEventListener('click',e=>{if(e.target===$(id))$(id).close();}));
-$('studio-dialog').addEventListener('close',()=>{imageVersion++;cardFile=null;const c=$('studio-canvas');c.width=1;c.height=1;});
+$('studio-dialog').addEventListener('close',()=>{clearTimeout(studioFlipTimer);studioFlipTimer=null;$('studio-flip-frame').classList.remove('is-flipping');imageVersion++;cardFile=null;cardImagePromise=null;const c=$('studio-canvas');c.width=1;c.height=1;});
 window.addEventListener('popstate',e=>{if(!e.state?.rideDna||!screens[e.state.screen])return;const h=e.state;if(h.mode&&MODE_CONFIG[h.mode])state.mode=h.mode;
- if(Number.isInteger(h.index))state.index=Math.max(0,Math.min(h.index,40));if(Number.isInteger(h.adaptIndex))state.adaptIndex=Math.max(0,Math.min(h.adaptIndex,state.adaptive.length-1));if(Number.isInteger(h.personalityIndex))state.personalityIndex=Math.max(0,Math.min(h.personalityIndex,19));
+ if(Number.isInteger(h.index))state.index=Math.max(0,Math.min(h.index,40));if(Number.isInteger(h.adaptIndex))state.adaptIndex=Math.max(0,Math.min(h.adaptIndex,state.adaptive.length-1));
  if(h.screen==='quiz'&&state.completed&&!state.shared){
   state.completed=false;state.index=Math.min(state.index,answerTotal()-1);state.adaptive=[];state.adaptAnswers=[];state.adaptIndex=0;
  }
