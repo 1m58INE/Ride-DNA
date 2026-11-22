@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://t1.kakaocdn.net; style-src 'self'; img-src 'self' data: https://*.kakao.com https://*.kakaocdn.net; font-src 'self'; connect-src 'self' https://*.kakao.com https://*.kakaocdn.net; frame-src https://*.kakao.com https://*.kakaocdn.net; form-action 'self'; upgrade-insecure-requests"><meta name="theme-color" content="#111114"><meta name="color-scheme" content="dark">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://t1.kakaocdn.net; style-src 'self'; img-src 'self' data: https://*.kakao.com https://*.kakaocdn.net; font-src 'self'; connect-src 'self' https://*.kakao.com https://*.kakaocdn.net; frame-src https://*.kakao.com https://*.kakaocdn.net; form-action 'self'; upgrade-insecure-requests"><meta name="theme-color" content="#0c0d12"><meta name="color-scheme" content="dark">
   <meta name="description" content="나는 어떤 라이더일까? 빠른 검사 16문항과 심화 검사 40문항으로 라이딩 취향과 어울리는 바이크 스타일을 알아보세요. 무료 · 회원가입 없음.">
   <meta property="og:title" content="RIDE DNA | 나는 어떤 라이더일까?">
   <meta property="og:description" content="빠른 검사와 심화 검사 중 선택하세요. 라이더 유형, 바이크 스타일, 선택형 예상 MBTI까지.">
@@ -11,9 +11,9 @@
   <meta property="og:image" content="https://1m58ine.github.io/Ride-DNA/assets/social-preview.jpg">
   <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="./styles.css?v=1.6.0">
-  <script src="./config.js?v=1.6.0" defer></script>
-  <script src="./app.js?v=1.6.0" defer></script>
+  <link rel="stylesheet" href="./styles.css?v=1.7.0">
+  <script src="./config.js?v=1.7.0" defer></script>
+  <script src="./app.js?v=1.7.0" defer></script>
   <noscript><style>body:before{content:"RIDE DNA 테스트를 이용하려면 브라우저의 JavaScript 기능이 필요합니다.";display:block;background:#e1d4d4;color:#18181b;text-align:center;padding:15px}</style></noscript>
   <title>RIDE DNA — 나의 라이더 유형</title>
 </head>
@@ -36,6 +36,20 @@
         <div class="hero-meta"><span>빠른 16문항</span><span>심화 40문항</span><span>회원가입 없음</span></div>
         <button type="button" id="hero-reset" data-action="restart" class="hero-reset" hidden>처음부터 다시 시작</button>
       </div>
+      <div class="hero-visual" aria-hidden="true">
+        <div class="hero-visual-top"><span>RIDE DNA</span><span>FIND YOUR MOTION</span></div>
+        <svg viewBox="0 0 520 520" class="hero-speedmark" focusable="false">
+          <defs><linearGradient id="heroGlint" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#f9a5a5"/><stop offset=".47" stop-color="#c72c43"/><stop offset="1" stop-color="#56101e"/></linearGradient></defs>
+          <circle cx="260" cy="260" r="208" fill="none" stroke="#ffffff" stroke-opacity=".08" stroke-width="1"/>
+          <circle cx="260" cy="260" r="164" fill="none" stroke="#ffffff" stroke-opacity=".08" stroke-width="1" stroke-dasharray="6 17"/>
+          <path d="M63 340 C130 259 182 187 271 109 S419 152 457 203" fill="none" stroke="url(#heroGlint)" stroke-width="25" stroke-linecap="round"/>
+          <path d="M69 393 C175 245 201 163 272 149 S388 212 468 102" fill="none" stroke="#f7d7db" stroke-opacity=".45" stroke-width="2"/>
+          <path d="M102 438 C230 312 228 251 296 222 S407 190 487 248" fill="none" stroke="#e44b62" stroke-opacity=".5" stroke-width="3"/>
+          <circle cx="271" cy="109" r="9" fill="#f7b2bb"/><circle cx="260" cy="260" r="5" fill="#f7b2bb" opacity=".8"/>
+          <path d="M0 460 L470 0 M40 500 L510 40" stroke="#fff" stroke-opacity=".07" stroke-width="1"/>
+        </svg>
+        <div class="hero-visual-bottom"><span class="hero-visual-number">08 <small>RIDING STYLES</small></span><span class="hero-visual-number">16 <small>RIDER TYPES</small></span></div>
+      </div>
     </div>
     <section class="home-summary" aria-labelledby="summary-title">
       <div class="summary-heading"><h2 id="summary-title">테스트가 알려주는 것</h2><p>결과에는 나의 취향이 담겨요.</p></div>
@@ -54,8 +68,8 @@
     <h1 id="choose-title" tabindex="-1" data-autofocus>어떻게 알아볼까요?</h1>
     <p class="choice-description">내가 원하는 깊이만큼. 두 방식 모두 무료이며, 라이딩 경험이 없어도 참여할 수 있어요.</p>
     <div class="mode-options">
-      <button class="mode-card" type="button" data-action="quick"><span class="mode-icon">01</span><strong>빠른 유형 찾기</strong><small>가볍게 알아보는 나의 라이더 성향</small><span class="mode-footer">16문항 · 약 3분 <b aria-hidden="true">↗</b></span></button>
-      <button class="mode-card" type="button" data-action="deep"><span class="mode-icon">02</span><strong>진지한 유형 찾기</strong><small>5단계 선택으로 취향의 강도를 알아보는 심화 검사</small><span class="mode-footer">40문항 · 추가 24문항은 5단계 응답 <b aria-hidden="true">↗</b></span></button>
+      <button class="mode-card" type="button" data-action="quick"><span class="mode-icon">01</span><span class="mode-art mode-art-quick" aria-hidden="true"><i></i><i></i><i></i></span><strong>빠른 유형 찾기</strong><small>가볍게 알아보는 나의 라이더 성향</small><span class="mode-footer">16문항 · 약 3분 <b aria-hidden="true">↗</b></span></button>
+      <button class="mode-card" type="button" data-action="deep"><span class="mode-icon">02</span><span class="mode-art mode-art-deep" aria-hidden="true"><i></i><i></i><i></i></span><strong>진지한 유형 찾기</strong><small>5단계 선택으로 취향의 강도를 알아보는 심화 검사</small><span class="mode-footer">40문항 · 추가 24문항은 5단계 응답 <b aria-hidden="true">↗</b></span></button>
     </div>
     <div id="continue-box" class="continue-box" hidden><span id="resume-description"></span><button type="button" class="btn-ghost" data-action="resume">이어하기 →</button></div>
     <p class="choice-footnote">빠른 검사 16문항은 그대로 유지해요. 심화 검사는 추가 24문항을 5단계로 답하며, 바로 이어할 수 있어요.</p>
@@ -63,8 +77,11 @@
 
   <section id="quiz-screen" class="screen quiz-screen" aria-label="라이딩 성향 테스트" hidden>
     <div class="quiz-topline"><button type="button" class="text-back" id="quiz-exit">← 나가기</button><div class="quiz-steps"><span id="quiz-stage">라이더 성향</span><strong id="quiz-progress-label">01 / 20</strong></div></div>
-    <div class="progress-track" role="progressbar" aria-label="테스트 진행률" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="quiz-progress"><span id="quiz-progress-fill"></span></div>
-    <div class="quiz-body"><p class="question-category" id="question-category"></p><h2 id="question-title" tabindex="-1"></h2><p class="question-hint" id="question-hint"></p><div class="answers" id="answers" role="group" aria-label="답변 선택"></div></div>
+    <div class="road-progress">
+      <svg class="road-progress-art" id="road-progress-art" viewBox="0 0 700 26" preserveAspectRatio="none" aria-hidden="true"><path class="road-guide" d="M1 17 L130 17 L176 8 L254 8 L289 19 L390 19 L453 7 L516 7 L570 17 L699 17"/><path class="road-active" id="road-active" d="M1 17 L130 17 L176 8 L254 8 L289 19 L390 19 L453 7 L516 7 L570 17 L699 17"/><circle class="road-marker" id="road-marker" r="5" cx="1" cy="17"/></svg>
+      <div class="progress-track" role="progressbar" aria-label="테스트 진행률" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="quiz-progress"><span id="quiz-progress-fill"></span></div>
+    </div>
+    <div class="quiz-body"><div class="question-stamp" aria-hidden="true"><span id="question-stamp-label">RIDER / 01</span><svg viewBox="0 0 96 34"><path d="M3 26 H25 L40 7 H53 L71 26 H94" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="71" cy="26" r="4" fill="currentColor"/></svg></div><p class="question-category" id="question-category"></p><h2 id="question-title" tabindex="-1"></h2><p class="question-hint" id="question-hint"></p><div class="answers" id="answers" role="group" aria-label="답변 선택"></div></div>
     <div class="quiz-footer"><button id="quiz-prev" class="btn-back" type="button">← 이전 질문</button><span id="quiz-helper">답변을 누르면 다음 질문으로 넘어갑니다.</span></div>
   </section>
 
@@ -78,17 +95,21 @@
           <p class="result-english" id="result-english"></p>
           <p class="result-description" id="result-description"></p>
         </div>
-        <div class="dna-signature" aria-label="라이딩 취향 8가지 지표를 표현한 DNA 시각 패턴">
-          <div class="signature-label"><span>DNA SIGNATURE</span><i aria-hidden="true"></i></div>
-          <svg id="dna-signature-svg" class="dna-svg" viewBox="0 0 220 220" role="img" aria-label="8가지 라이딩 취향 지표에 따라 만들어진 도형"></svg>
-          <span class="signature-footnote">나의 여덟 가지 라이딩 취향</span>
-        </div>
+        <section class="genre-spotlight" aria-labelledby="spotlight-title">
+          <div class="spotlight-head"><span>YOUR MOTORCYCLE MATCH</span><span id="spotlight-rank">01 / 02</span></div>
+          <svg id="genre-art-svg" class="genre-art-svg" viewBox="0 0 480 345" role="img" aria-label="추천 장르를 추상적으로 표현한 장면"></svg>
+          <div class="spotlight-caption"><div><span id="spotlight-label">TOP PICK</span><strong id="spotlight-title"></strong><p id="spotlight-description"></p></div><div class="spotlight-nav"><button type="button" id="spotlight-prev" aria-label="첫 번째 추천 장르 보기">←</button><button type="button" id="spotlight-next" aria-label="두 번째 추천 장르 보기">→</button></div></div>
+        </section>
       </div>
       <div class="result-highlight" aria-label="바이크 스타일 추천 요약">
         <div class="result-highlight-major"><span>나와 가장 가까운 바이크</span><strong id="result-best-genre"></strong></div>
         <div class="result-highlight-minor"><span>함께 추천하는 스타일</span><strong id="result-next-genre"></strong></div>
       </div>
       <div class="result-actions"><button type="button" id="share-button" class="btn-primary">결과 공유하기 <span aria-hidden="true">↗</span></button><button type="button" id="image-button" class="btn-ghost">라이더 카드 만들기 <span aria-hidden="true">▣</span></button></div>
+      <div class="result-signature-panel"><div class="signature-copy"><span class="signature-eyebrow">DNA SIGNATURE / 8 AXES</span><strong>취향을 닮은 하나의 선.</strong><p>8가지 라이딩 취향으로 생성된 고유한 패턴이에요.</p><button type="button" id="signature-inspect" class="signature-inspect" aria-expanded="false" aria-controls="signature-axis-list">패턴 자세히 보기 <span aria-hidden="true">↗</span></button></div>
+        <div class="dna-signature" aria-label="라이딩 취향 8가지 지표를 표현한 DNA 시각 패턴"><div class="signature-label"><span>YOUR SIGNATURE</span><i aria-hidden="true"></i></div><svg id="dna-signature-svg" class="dna-svg" viewBox="0 0 220 220" role="img" aria-label="8가지 라이딩 취향 지표에 따라 만들어진 도형"></svg><span class="signature-footnote">나의 여덟 가지 라이딩 취향</span></div>
+        <div id="signature-axis-list" class="signature-axis-list" hidden></div>
+      </div>
       <button type="button" id="duo-button" class="duo-entry"><span><strong>친구와 라이딩 취향 비교</strong><small>RIDER DUO · 서로의 공통점과 차이점</small></span><span aria-hidden="true">→</span></button>
       <p id="share-feedback" class="feedback" role="status"></p>
     </div>
@@ -150,6 +171,7 @@
 <dialog id="studio-dialog" class="studio-dialog" aria-labelledby="studio-title">
  <div class="sheet-top"><div><span class="micro-label">RIDE DNA / RIDER ID</span><h2 id="studio-title">라이더 카드 만들기</h2></div><button class="sheet-close" type="button" data-close="studio-dialog" aria-label="닫기">×</button></div>
  <div class="studio-layout"><div class="studio-preview"><canvas id="studio-canvas" width="1080" height="1350" role="img" aria-label="결과 이미지 미리보기"></canvas></div><div class="studio-controls">
+ <fieldset class="studio-theme"><legend>카드 디자인</legend><div class="studio-theme-grid"><label><input type="radio" name="studio-theme" value="noir" checked><span class="theme-swatch theme-noir" aria-hidden="true"></span><strong>NOIR</strong></label><label><input type="radio" name="studio-theme" value="velocity"><span class="theme-swatch theme-velocity" aria-hidden="true"></span><strong>VELOCITY</strong></label><label><input type="radio" name="studio-theme" value="signature"><span class="theme-swatch theme-signature" aria-hidden="true"></span><strong>SIGNATURE</strong></label></div></fieldset>
  <fieldset><legend>이미지 비율</legend><div class="studio-radios"><label><input type="radio" name="studio-size" value="feed" checked>피드 4:5</label><label><input type="radio" name="studio-size" value="story">스토리 9:16</label><label><input type="radio" name="studio-size" value="square">정사각 1:1</label></div></fieldset>
  <label class="sheet-toggle"><input type="checkbox" id="studio-mbti"><span>MBTI 포함<small>미선택 시 카드에 표시하지 않아요.</small></span></label>
  <div class="studio-save"><button type="button" id="studio-download" class="btn-primary">PNG 이미지 저장 ↓</button><button type="button" id="studio-native" class="btn-ghost">다른 앱으로 보내기 ↗</button></div>

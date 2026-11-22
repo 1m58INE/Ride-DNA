@@ -179,10 +179,63 @@ function drawSignature(svg,axes){
   svg.append(svgElement('line',{x1:110,y1:110,x2:(110+103*Math.cos(a)).toFixed(2),y2:(110+103*Math.sin(a)).toFixed(2),stroke:'rgba(209,181,190,.15)','stroke-width':1}));
  }
  const points=signaturePoints(axes);
+ const ribbon=svgElement('path',{d:points.map(([x,y],i)=>`${i?'L':'M'}${x.toFixed(2)} ${y.toFixed(2)}`).join(' '),fill:'none',stroke:'#f5acb6','stroke-opacity':.12,'stroke-width':9,'stroke-linejoin':'round','stroke-linecap':'round'});svg.append(ribbon);
+ points.forEach(([x,y],i)=>{const a=-Math.PI/2+i*Math.PI/4;svg.append(svgElement('line',{x1:x.toFixed(2),y1:y.toFixed(2),x2:(110+Math.cos(a)*106).toFixed(2),y2:(110+Math.sin(a)*106).toFixed(2),stroke:'#f6cbd1','stroke-opacity':.4,'stroke-width':1.3}));});
  const poly=svgElement('polygon',{points:points.map(p=>p.map(x=>x.toFixed(2)).join(',')).join(' '),fill:'rgba(210,59,75,.21)',stroke:'#ed7482','stroke-width':2.6,'stroke-linejoin':'round',class:'signature-shape'});
  svg.append(poly);
  points.forEach(([x,y])=>svg.append(svgElement('circle',{cx:x.toFixed(2),cy:y.toFixed(2),r:3.3,fill:'#f09da6',class:'signature-dot'})));
  svg.append(svgElement('circle',{cx:110,cy:110,r:3,fill:'#f1c2c7'}));
+}
+
+/* v1.7.0 — Genre artwork is authored SVG geometry, not a fetched asset.
+   All paths are constant. User/URL data is only used to select allow-listed genres. */
+const GENRE_STROKES={
+ naked:['M-40 184 C90 77 159 77 253 173 S408 264 535 124','M-40 236 C104 117 161 126 247 207 S418 291 535 168'],
+ sport:['M-30 286 L176 82 L260 128 L490 -44','M-24 341 L196 132 L274 173 L518 -8'],
+ cruiser:['M-30 233 C85 223 100 155 203 155 S364 247 510 196','M-24 281 C124 284 124 202 226 202 S367 281 507 248'],
+ touring:['M-20 276 C112 278 123 79 234 91 S359 261 500 47','M-20 329 C137 323 143 129 252 143 S370 284 501 106'],
+ adventure:['M-35 305 L108 125 L180 212 L263 48 L366 177 L514 5','M-28 341 L109 187 L180 266 L267 112 L376 229 L516 83'],
+ dual:['M-34 276 L169 66 L214 193 L336 78 L517 222','M-31 332 L174 139 L230 257 L350 149 L513 286'],
+ retro:['M-30 266 C62 74 168 74 235 178 S373 318 504 129','M-30 305 C87 118 176 126 248 225 S390 347 512 174'],
+ scooter:['M-28 293 L84 293 L84 160 L177 160 L177 233 L310 233 L310 99 L509 99','M-25 329 L123 329 L123 202 L220 202 L220 273 L350 273 L350 149 L512 149']
+};
+const GENRE_PALETTE={naked:'#ef7787',sport:'#fe9b75',cruiser:'#d19d85',touring:'#98c0d4',adventure:'#b4d0a6',dual:'#ecc182',retro:'#d1a5bb',scooter:'#93c8ca'};
+let spotlightPicks=[],spotlightIndex=0;
+function drawGenreArt(svg,id){
+ if(!svg)return;
+ const key=Object.hasOwn(GENRE_STROKES,id)?id:'naked';
+ const [primary,secondary]=GENRE_STROKES[key];const color=GENRE_PALETTE[key];
+ svg.replaceChildren();
+ const defs=svgElement('defs');const gradient=svgElement('linearGradient',{id:'genre-line-gradient',x1:'0%',y1:'0%',x2:'100%',y2:'100%'});
+ [['0%',color],['54%','#f8e8e8'],['100%',color]].forEach(([offset,stop])=>gradient.append(svgElement('stop',{offset,'stop-color':stop})));
+ defs.append(gradient);svg.append(defs);
+ for(let i=0;i<13;i++)svg.append(svgElement('line',{x1:-30+i*42,y1:0,x2:-130+i*42,y2:345,stroke:'#ffffff','stroke-opacity':.025,'stroke-width':1}));
+ [67,111,160].forEach((r,i)=>svg.append(svgElement('circle',{cx:262,cy:173,r,fill:'none',stroke:i===2?color:'#ffffff','stroke-opacity':i===2?.19:.10,'stroke-width':1,'stroke-dasharray':i===2?'3 16':'none'})));
+ for(let i=0;i<3;i++)svg.append(svgElement('path',{d:primary,fill:'none',stroke:color,'stroke-width':27+i*11,'stroke-opacity':i===0?.16:i===1?.06:.025,'stroke-linecap':'round'}));
+ svg.append(svgElement('path',{d:primary,fill:'none',stroke:'url(#genre-line-gradient)','stroke-width':12,'stroke-linecap':'round',class:'genre-art-main'}));
+ svg.append(svgElement('path',{d:secondary,fill:'none',stroke:color,'stroke-width':2.3,'stroke-opacity':.65,class:'genre-art-second'}));
+ svg.append(svgElement('circle',{cx:263,cy:173,r:5,fill:'#ffdfde'}));
+ svg.append(svgElement('path',{d:'M18 35 H110 M370 295 H460',fill:'none',stroke:color,'stroke-width':2,'stroke-opacity':.54}));
+}
+function showSpotlight(index){
+ if(spotlightPicks.length===0)return;
+ spotlightIndex=Math.max(0,Math.min(1,index));const pick=spotlightPicks[spotlightIndex];
+ if(!pick?.genre)return;
+ $('spotlight-rank').textContent=`0${spotlightIndex+1} / 02`;
+ $('spotlight-label').textContent=spotlightIndex===0?'TOP MATCH':'SECOND MATCH';
+ $('spotlight-title').textContent=pick.genre.name;
+ $('spotlight-description').textContent=pick.genre.desc;
+ $('genre-art-svg').setAttribute('aria-label',`${pick.genre.name} 스타일을 추상적으로 나타낸 그래픽`);
+ drawGenreArt($('genre-art-svg'),pick.genre.id);
+ $('genre-art-svg').classList.remove('art-changing');
+ if(motionEnabled()){void $('genre-art-svg').offsetWidth;$('genre-art-svg').classList.add('art-changing');}
+ $('spotlight-prev').disabled=spotlightIndex===0;$('spotlight-next').disabled=spotlightIndex===1;
+}
+function renderSignatureDetails(result,isShared){
+ const list=$('signature-axis-list');list.replaceChildren();
+ if(isShared){const text=document.createElement('p');text.className='fine-print';text.textContent='공유 결과에는 개인별 8개 취향 점수가 포함되지 않아요. 이 그래픽은 추천 장르의 특성을 참고한 요약 표현이에요.';list.append(text);return;}
+ const top=Object.entries(result.axes).sort((a,b)=>b[1]-a[1]);
+ top.forEach(([name,score])=>{const row=document.createElement('div');row.className='signature-axis-row';const label=document.createElement('span');label.textContent=AXES[name];const val=document.createElement('strong');val.textContent=String(score);row.append(label,val);list.append(row);});
 }
 function displayAxesForResult(result){
  if(result.axes)return result.axes;
@@ -293,9 +346,11 @@ function renderQuiz(){
  const total=answerTotal(),step=extra?40+state.adaptIndex+1:state.index+1,max=extra?40+state.adaptive.length:total;
  const chapter=deep&&!extra&&state.index>=16?` · 심화 ${Math.floor((state.index-16)/8)+1}/3`:(deep?' · 공통 질문':'');
  $('quiz-stage').textContent=(extra?'추가 취향 확인':MODE_CONFIG[state.mode].label)+chapter;
+ $('question-stamp-label').textContent=`RIDER / ${String(step).padStart(2,'0')}`;
  $('quiz-progress-label').textContent=String(step).padStart(2,'0')+' / '+max;
  updateProgressMotion($('quiz-progress'));
  const pct=Math.round((step-1)/Math.max(1,max)*100);$('quiz-progress-fill').style.width=pct+'%';$('quiz-progress').setAttribute('aria-valuenow',String(pct));
+ const road=$('road-active'),marker=$('road-marker');if(road&&marker){const length=road.getTotalLength(),at=length*pct/100,point=road.getPointAtLength(at);road.style.strokeDasharray=String(length);road.style.strokeDashoffset=String(length-at);marker.setAttribute('cx',point.x.toFixed(2));marker.setAttribute('cy',point.y.toFixed(2));}
  $('question-category').textContent=extra?'두 취향이 비슷하게 나타나요':scale?'취향의 강도 · '+q.c:q.c;
  $('question-title').textContent=extra?'둘 중 어느 쪽이 조금 더 중요한가요?':q.t;
  $('question-hint').textContent=extra?'어느 쪽도 아니라면 비슷하다고 선택해 주세요.':q.h;
@@ -365,6 +420,7 @@ function renderResult(){const share=state.shared&&state.sharedData;const result=
  $('result-title').textContent=t[0];$('result-english').textContent=t[1];$('result-serial').textContent='TYPE '+String(result.type+1).padStart(2,'0')+' / 16';
  $('result-description').textContent=t[2];$('result-best-genre').textContent=picks[0]?.genre?.name||'—';$('result-next-genre').textContent=picks[1]?.genre?.name||'—';
  $('result-mode').textContent=share?(share.mode==='deep'?'심화 결과 공유':'빠른 결과 공유'):state.mode==='deep'?'진지한 유형 찾기 결과':'빠른 유형 찾기 결과';
+ spotlightPicks=picks.slice(0,2);showSpotlight(0);$('signature-inspect').setAttribute('aria-expanded','false');$('signature-axis-list').hidden=true;renderSignatureDetails(result,Boolean(share));
  $('result-deep-cta').hidden=Boolean(share)||state.mode==='deep';$('shared-note').hidden=!share;
  $('result-details').open=false;
  $('duo-button').querySelector('strong').textContent=duoInvite?'친구와 내 라이딩 취향 비교하기':'친구와 라이딩 취향 비교';
@@ -498,22 +554,34 @@ function canvasWrap(ctx,str,x,y,maxWidth,font,lineHeight,linesMax=3){
 }
 const IMAGE_SIZES={feed:[1080,1350],story:[1080,1920],square:[1080,1080]};
 function createCard(){
+ const theme=document.querySelector('input[name="studio-theme"]:checked')?.value||'noir';
  const choice=document.querySelector('input[name="studio-size"]:checked')?.value||'feed';
  const [w,h]=IMAGE_SIZES[choice]||IMAGE_SIZES.feed,c=$('studio-canvas'),ctx=c.getContext('2d');if(!ctx)return;
  c.width=w;c.height=h;const d=cleanSummary(shareData()),first=GENRES.find(x=>x.id===d.genres[0].id),second=GENRES.find(x=>x.id===d.genres[1].id);
  // 고정된 로컬 데이터만 캔버스에 그립니다. URL 문자열이나 사용자 HTML 삽입 없음.
  ctx.fillStyle='#101116';ctx.fillRect(0,0,w,h);
  const grd=ctx.createLinearGradient(0,0,w,h);grd.addColorStop(0,'#191921');grd.addColorStop(1,'#101116');ctx.fillStyle=grd;ctx.fillRect(0,0,w,h);
- ctx.fillStyle='#DB4354';ctx.fillRect(0,0,13,h);ctx.fillRect(76,105,w-152,5);
+ if(theme==='velocity'){
+  const v=ctx.createLinearGradient(w,0,0,h);v.addColorStop(0,'#7b192d');v.addColorStop(.58,'#1c141e');v.addColorStop(1,'#0b1017');ctx.fillStyle=v;ctx.fillRect(0,0,w,h);
+  ctx.save();ctx.beginPath();ctx.rect(0,0,w,h);ctx.clip();
+  for(let i=0;i<14;i++){ctx.beginPath();ctx.moveTo(450+i*67,-80);ctx.lineTo(-390+i*89,h+150);ctx.strokeStyle=`rgba(243,95,113,${i%3===0?.20:.055})`;ctx.lineWidth=i%3===0?16:2;ctx.stroke();}
+  ctx.restore();
+ }else if(theme==='signature'){
+  ctx.fillStyle='#11131d';ctx.fillRect(0,0,w,h);
+  ctx.save();ctx.translate(w*.53,h*.32);const radius=Math.min(w,h)*.35;
+  for(let i=0;i<26;i++){ctx.beginPath();ctx.arc(0,0,radius-i*12,0,Math.PI*2);ctx.strokeStyle=`rgba(213,70,91,${i%5===0?.16:.045})`;ctx.lineWidth=i%5===0?3:1;ctx.stroke();}
+  ctx.restore();
+ }
+ ctx.fillStyle=theme==='signature'?'#ec8c9a':'#DB4354';ctx.fillRect(0,0,13,h);ctx.fillRect(76,105,w-152,5);
  // Share card uses the same eight-axis static signature as the animated on-page pattern.
  const sigAxes=state.shared?displayAxesForResult(d):calculate().axes;
- const sigPts=signaturePoints(sigAxes);ctx.save();ctx.translate(w-168,205);ctx.scale(.70,.70);ctx.translate(-110,-110);
+ const sigPts=signaturePoints(sigAxes);ctx.save();ctx.translate(theme==='signature'?w-220:w-168,theme==='signature'?h*.28:205);ctx.scale(theme==='signature'?1.18:.70,theme==='signature'?1.18:.70);ctx.translate(-110,-110);
  ctx.strokeStyle='rgba(210,185,193,.18)';ctx.lineWidth=1.5;[44,76,103].forEach(r=>{ctx.beginPath();ctx.arc(110,110,r,0,Math.PI*2);ctx.stroke();});
  ctx.beginPath();sigPts.forEach(([x,y],i)=>i===0?ctx.moveTo(x,y):ctx.lineTo(x,y));ctx.closePath();ctx.fillStyle='rgba(210,59,75,.20)';ctx.fill();ctx.strokeStyle='#ed7482';ctx.lineWidth=3;ctx.stroke();
  sigPts.forEach(([x,y])=>{ctx.beginPath();ctx.arc(x,y,3.8,0,Math.PI*2);ctx.fillStyle='#f1a3ac';ctx.fill();});ctx.restore();
  const txt=(str,x,y,font,color)=>{ctx.fillStyle=color;ctx.font=font;ctx.fillText(str,x,y);};
  txt('RIDE DNA',76,192,'800 66px system-ui, sans-serif','#F4F2F1');
- txt(d.mode==='deep'?'DEEP RIDER REPORT':'RIDER ID CARD',76,247,'600 24px system-ui, sans-serif','#B9AFB6');
+ txt(theme==='velocity'?'VELOCITY EDITION':theme==='signature'?'DNA SIGNATURE EDITION':d.mode==='deep'?'DEEP RIDER REPORT':'RIDER ID CARD',76,247,'600 24px system-ui, sans-serif','#B9AFB6');
  const square=h===1080,top=square?300:h===1350?405:560,titleSize=square?64:82,lh=square?79:107;
  txt('MY RIDER TYPE',76,top,'700 27px system-ui, sans-serif','#DF7F8B');
  ctx.fillStyle='#F9F6F4';const count=canvasWrap(ctx,TYPES[d.type][0],76,top+100,w-152,`750 ${titleSize}px system-ui, sans-serif`,lh,3);
@@ -530,7 +598,7 @@ function createCard(){
  cardFile=null;const version=++imageVersion;
  c.toBlob(blob=>{if(blob&&version===imageVersion)cardFile=new File([blob],`RIDE_DNA_${choice.toUpperCase()}.png`,{type:'image/png'});},'image/png');
 }
-function openStudio(){if($('share-dialog').open)$('share-dialog').close();$('studio-feedback').textContent='';$('studio-mbti').checked=false;document.querySelector('input[value="feed"][name="studio-size"]').checked=true;$('studio-dialog').showModal();createCard();}
+function openStudio(){if($('share-dialog').open)$('share-dialog').close();$('studio-feedback').textContent='';$('studio-mbti').checked=false;document.querySelector('input[value="feed"][name="studio-size"]').checked=true;document.querySelector('input[value="noir"][name="studio-theme"]').checked=true;$('studio-dialog').showModal();createCard();}
 function downloadCard(){const c=$('studio-canvas');try{const a=document.createElement('a');a.download=`RIDE_DNA_${(document.querySelector('input[name="studio-size"]:checked')?.value||'feed').toUpperCase()}.png`;a.href=c.toDataURL('image/png');document.body.append(a);a.click();a.remove();$('studio-feedback').textContent='PNG 저장을 요청했어요.';}catch{$('studio-feedback').textContent='저장할 수 없어요. 브라우저의 공유 기능을 이용해 주세요.';}}
 async function sendCard(){if(!cardFile){$('studio-feedback').textContent='이미지를 준비하는 중이에요. 잠시 뒤 다시 눌러 주세요.';return;}
  if(!navigator.share||!navigator.canShare?.({files:[cardFile]})){$('studio-feedback').textContent='이 브라우저는 이미지 공유를 지원하지 않아요. PNG 저장을 이용해 주세요.';return;}
@@ -546,6 +614,8 @@ setMotionMode(readMotionMode(),{save:false});
 $('motion-settings-button').addEventListener('click',openMotionSettings);
 $('motion-close').addEventListener('click',()=>$('motion-dialog').close());
 document.querySelectorAll('input[name="motion-mode"]').forEach(x=>x.addEventListener('change',()=>setMotionMode(x.value)));
+$('spotlight-prev').addEventListener('click',()=>showSpotlight(0));$('spotlight-next').addEventListener('click',()=>showSpotlight(1));
+$('signature-inspect').addEventListener('click',()=>{const list=$('signature-axis-list');list.hidden=!list.hidden;$('signature-inspect').setAttribute('aria-expanded',String(!list.hidden));});
 $('reveal-skip').addEventListener('click',()=>dismissReveal());
 $('reveal-overlay').addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();dismissReveal();}});
 $('motion-dialog').addEventListener('click',e=>{if(e.target===$('motion-dialog'))$('motion-dialog').close();});
@@ -558,7 +628,7 @@ $('share-button').addEventListener('click',()=>openShare(false));$('image-button
 $('duo-button').addEventListener('click',openDuo);$('duo-share-button').addEventListener('click',()=>openShare(true));
 $('share-kakao').addEventListener('click',kakaoShare);$('share-native').addEventListener('click',nativeShare);$('share-copy').addEventListener('click',copyShare);
 $('share-open-studio').addEventListener('click',openStudio);$('studio-download').addEventListener('click',downloadCard);$('studio-native').addEventListener('click',sendCard);
-document.querySelectorAll('input[name="studio-size"],#studio-mbti').forEach(x=>x.addEventListener('change',createCard));
+document.querySelectorAll('input[name="studio-size"],input[name="studio-theme"],#studio-mbti').forEach(x=>x.addEventListener('change',createCard));
 document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',()=>$(b.dataset.close)?.close()));
 ['share-dialog','studio-dialog'].forEach(id=>$(id).addEventListener('click',e=>{if(e.target===$(id))$(id).close();}));
 $('studio-dialog').addEventListener('close',()=>{imageVersion++;cardFile=null;const c=$('studio-canvas');c.width=1;c.height=1;});
